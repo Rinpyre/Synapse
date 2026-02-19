@@ -1,0 +1,248 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{color}
+
+\geometry{margin=1in}
+
+% Header and footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Synapse - Group 12}
+\fancyhead[R]{\includegraphics[height=0.45cm]{./images/speedadmin-logo.png}}
+\fancyfoot[C]{\thepage}
+
+% Section title formatting - reduce spacing and add periods
+\titleformat{\section}
+  {\large\bfseries}
+  {\thesection.}
+  {0.25em}
+  {}
+
+% Subsection title formatting
+\titleformat{\subsection}
+  {\normalsize\bfseries}
+  {\thesubsection.}
+  {0.25em}
+  {}
+
+% TOC customization - add dots to all entries and center title
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecaftersnum}{.}
+\renewcommand{\cftsubsecaftersnum}{.}
+\renewcommand{\cftsecnumwidth}{1.25em}
+\renewcommand{\cftsubsecnumwidth}{2em}
+
+% Center TOC title
+\renewcommand{\contentsname}{\centering\large\bfseries Table of Contents}
+\renewcommand{\cfttoctitlefont}{\hfill}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+% 2. DOCUMENT CONTENT
+\begin{document}
+
+% Custom title page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge\bfseries Synapse \par}
+    \vfill
+    {\Large\bfseries Project Proposal \par}
+    {\large\bfseries AI Summarisation and Analysis of Resource \par}
+    \vspace{1.5cm}
+
+    \vfill
+    {\Large \textbf{Group 12}} \\
+    \vspace{0.25cm}
+    \begin{tabular}{r | l}
+        Adrian Cristian Stancu & astan24@student.sdu.dk \\
+        Dorina Petra Nagy      & donag24@student.sdu.dk \\
+        Tomass Zarins          & tozar24@student.sdu.dk \\
+        Jakub Cuninka          & jacun24@student.sdu.dk \\
+        Marks Karlins          & mkarl24@student.sdu.dk \\
+        Balazs Istvan Nemeth   & banem24@student.sdu.dk \\
+    \end{tabular}
+    \vspace{1cm}
+
+    {\Large \textbf{Mentor}} \\
+    \vspace{0.25cm}
+    \begin{tabular}{r | l}
+        Niklas Braun & niklas.braun@speedadmin.com \\
+    \end{tabular}
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ===== CONTENT BEGINS HERE =====
+\section{Project Background}
+SpeedAdmin is a leading provider of specialised software solutions tailored for music and art schools. Their cutting-edge platform streamlines administrative processes and facilitates seamless communication for the schools, enhancing efficiency and effectiveness. Their logs on students, teachers, lectures, instruments, etc. are verbose in nature, making them often difficult to understand for their support and customers' needs alike. We are looking to implement a system to help them improve their overview and the usefulness of own logs to the customer and support teams, leveraging the possibilities offered by AI prompting, and machine learning.
+
+\section{Aim}
+Build a containerized AI-powered system that enables support staff and customers to query SpeedAdmin resource logs in natural language, delivering summaries, anomaly detection, and pattern analysis to improve log comprehension and operational insights.
+
+\section{Objectives}
+\begin{itemize}
+    \item AI-powered log summarization and anomaly detection based on user prompts{\color{red}\textbf{*}}
+    \item Model-agnostic AI pipeline (swappable LLMs via Ollama){\color{red}\textbf{*}}
+    \item Containerized microservice architecture (Docker){\color{red}\textbf{*}}
+    \item REST API backend (Laravel){\color{red}\textbf{*}}
+    \item React frontend for log viewing and prompting
+    \item Optional: saving/sharing prompt results (MongoDB)
+\end{itemize}
+\textbf{Note:} Objectives marked with an asterisk are considered core objectives that we aim to achieve, while the others are additional features that we will implement if time allows.
+
+\section{Requirements Analysis}
+\subsection{Functional Requirements}
+\begin{itemize}
+    \item \textit{Log Ingestion:} The system must be able to ingest and process log data from SpeedAdmin's existing logging infrastructure.
+    \item \textit{Natural Language Querying:} Users should be able to query the logs using natural language prompts, and the system should return relevant summaries, insights, or anomaly detections based on the query.
+    \item \textit{Model-Agnostic AI Pipeline:} The system should be designed to allow for easy swapping of underlying LLMs (e.g., GPT-4, LLaMA) via Ollama without requiring significant changes to the codebase.
+    \item \textit{Containerization:} The entire system should be containerized using Docker to ensure consistency across different environments and ease of deployment.
+    \item \textit{REST API Backend:} A RESTful API should be developed using Laravel to handle user queries, interact with the AI models, and manage data storage if necessary.
+    \item \textit{Frontend Interface:} A user-friendly frontend should be developed using React to allow users to view logs, input queries, and receive responses from the AI system.
+    \item \textit{Optional Data Persistence:} If implemented, the system should allow users to save or share their query results, which would require integration with a database such as MongoDB.
+    \item \textit{Security and Access Control:} The system should implement appropriate security measures to protect sensitive log data and ensure that only authorized users can access the system, such as authentication.
+\end{itemize}
+\subsection{Non-Functional Requirements}
+\begin{itemize}
+    \item \textit{Performance:} The system should provide responses to user queries within an acceptable time frame (e.g., under 5 seconds) to ensure a smooth user experience.
+    \item \textit{Scalability:} The system should be designed to handle increasing volumes of log data and user queries without significant degradation in performance.
+    \item \textit{Usability:} The frontend interface should be intuitive and easy to navigate, allowing users of varying technical expertise to effectively utilize the system.
+    \item \textit{Maintainability:} The codebase should be well-documented and structured to facilitate easy maintenance and future enhancements.
+    \item \textit{Reliability:} The system should be robust and able to handle errors gracefully, ensuring that it remains operational even in the face of unexpected issues.
+\end{itemize}
+
+\section{Methods}
+To achieve the project objectives, we will make use of the following methods and technologies:
+\begin{itemize}
+    \item \textit{Agile Development:} We will follow an agile development approach, working in weekly iterative sprints along with regular team and mentor meetings.
+    \item \textit{Version Control:} We will use Git for version control to manage our codebase and collaborate effectively as a team.
+    \item \textit{GitHub:} We will host our code on GitHub, utilizing features such as issues, pull requests, and project boards to organize our work and track progress.
+    \item \textit{Discord:} We will use Discord for team communication and coordination, ensuring that all team members are aligned and can easily share updates and discuss project-related matters.
+    \item \textit{Project Management Tool:} \textbf{\textit{TODO: Add our chosen project management tool (e.g., Trello, Jira) if we decide to use one.}}
+          % TODO: Add our chosen project management tool (e.g., Trello, Jira) if we decide to use one.
+    \item \textit{AI Models:} We will leverage large language models (LLMs) such as GPT-4 or LLaMA for natural language processing tasks, including log summarization and anomaly detection.
+    \item \textit{Ollama:} This tool will be used to manage and swap between different LLMs without requiring significant code changes.
+    \item \textit{Docker:} We will use Docker to containerize the application, ensuring consistency across development, testing, and production environments.
+    \item \textit{Laravel:} This PHP framework will be used to develop the REST API backend that handles user queries and interacts with the AI models.
+    \item \textit{React:} The frontend will be built using React to create a responsive and user-friendly interface for viewing logs and inputting queries.
+    \item \textit{MSSQL:} We will use Microsoft SQL Server for any necessary relational data storage, such as user information or log metadata.
+    \item \textit{MongoDB (Optional):} If we choose to implement data persistence for saving or sharing query results, we will use MongoDB as our database solution.
+\end{itemize}
+\textbf{Note:} \textit{We have deviated from the original suggested tech stack by opting for Laravel instead of ASP.NET since our team has more experience with that framework.}
+
+\section{Architecture}
+The system will be designed using a microservice architecture, with the following components:
+\begin{itemize}
+    \item \textbf{Frontend} (\texttt{/frontend}): A React application that provides the user interface for viewing logs, inputting queries, and displaying AI-generated responses.
+    \item \textbf{Backend} (\texttt{/backend}): A Laravel application that serves as the REST API, handling user requests, processing queries, and interacting with the AI models and databases.
+    \item \textbf{AI Service} (\texttt{/ai}): A separate service responsible for managing interactions with the LLMs via Ollama, processing log data, and generating responses based on user queries. \\
+          \textit{This service should not impact the backend's ability to function if the AI models are unavailable, and should be designed to handle such scenarios gracefully.}
+    \item \textbf{Database} (\texttt{/database}): A Microsoft SQL Server instance for storing any necessary relational data, and optionally a MongoDB instance for saving query results if that feature is implemented.
+    \item \textbf{Containerization} (\texttt{/docker-compose.yml}): Docker will be used to containerize all components of the system, ensuring that they can be easily deployed and run in any environment.
+\end{itemize}
+
+\textbf{\textit{TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)}}
+% TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)
+
+\section{Risks and Mitigation Strategies}
+\begin{itemize}
+    \item \textbf{AI Model Performance:} The performance of the AI models may not meet expectations, leading to inaccurate or irrelevant responses.
+
+          \textbf{Mitigation:} We will make use of prompt engineering techniques to optimize the performance of the AI models, and we will conduct thorough output testing and validation to ensure that the responses generated by the models are accurate and relevant to user queries.
+
+    \item \textbf{Scalability Issues:} As the volume of log data and user queries increases, it may exceed the model's context window or lead to performance degradation.
+
+          \textbf{Mitigation:} We will design the system with scalability in mind, implementing strategies such as log filtering, summarization and chunking to manage large volumes of data, and optimizing the AI pipeline to handle increased load efficiently.
+
+    \item \textbf{Ollama performance on available hardware:} The performance of Ollama may be limited by the hardware resources available, which could impact the responsiveness of the AI service.
+
+          \textbf{Mitigation:} We will test early and often to ensure that Ollama performs as expected on our available hardware, and we will resort to using quantized models if necessary to improve performance while still maintaining acceptable response quality.
+
+          \textbf{Note:} \textit{The system should never use cloud-based LLMs to comply with GDPR regulations, so we will need to ensure that our local setup is sufficient for our needs.}
+
+    \item \textbf{Team unfamiliarity with technologies:} Some team members may be unfamiliar with certain technologies or frameworks used in the project, which could lead to delays or challenges in development.
+
+          \textbf{Mitigation:} We will allocate time for team members to learn and familiarize themselves with any new technologies, and we will encourage knowledge sharing and collaboration within the team to ensure that everyone is up to speed.
+\end{itemize}
+
+\section{Project Organization}
+The project will be developed by a team of 6 members with the following roles and responsibilities:
+
+\begin{itemize}
+    \item \textbf{Project Manager} (Adrian): Oversees project coordination, timeline management, and stakeholder communication.
+
+    \item \textbf{Backend Developers} (Adrian, Marks): Develop the REST API using Laravel, implement database interactions, and handle query processing and AI service integration.
+
+    \item \textbf{Frontend Developers} (Dorina, Tomass, Jakub): Build the React application, design the user interface, and ensure an optimal user experience.
+
+    \item \textbf{AI Specialists} (Balazs): Manage LLM interactions via Ollama, optimize prompts, and validate the accuracy and relevance of AI-generated responses.
+
+    \item \textbf{DevOps Engineer} (team-wide responsibility): Containerize the application using Docker, configure development and production environments, and manage deployment processes.
+
+\end{itemize}
+
+We will use GitHub for version control and project management, utilizing branches with prefixes (e.g., \texttt{feature/}, \texttt{bugfix/}, \texttt{docs/}) to organize our work. We will also use GitHub Pull Requests for code reviews and merging, and we will maintain a project board to track tasks and progress. We will use Discord for team communication, scheduling regular meetings to discuss progress, address challenges, and plan next steps.
+
+\textbf{Note:} \textit{While specific roles are assigned, all team members will collaborate and contribute across different areas of the project as needed to ensure its success.}
+
+\section{Project Plan}
+\hbadness=10000
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.23}
+    \begin{tabular}{|c|c|p{8.6cm}|c|}
+        \hline
+        \textbf{Week} & \textbf{Dates}  & \textbf{Focus}                                        & \textbf{Milestones} \\
+        \hline
+        8--9          & 19 Feb -- 5 Mar & Architecture design, repo setup, Docker skeleton      & {}                  \\
+        \hline
+        10            & 5 Mar           & Proposal submission                                   & \checkmark          \\
+        \hline
+        11--13        & 12--26 Mar      & Core backend API + DB connection, AI service skeleton &                     \\
+        \hline
+        14            & Easter Break    & \multicolumn{2}{c|}{\textit{No work planned}}                               \\
+        \hline
+        15            & 9 Apr           & Midterm seminar                                       & \checkmark          \\
+        \hline
+        16            & 16 Apr          & Midterm evaluation                                    & \checkmark          \\
+        \hline
+        17--19        & 23 Apr -- 7 May & Frontend, AI pipeline integration, prompt engineering &                     \\
+        \hline
+        20--21        & 14--21 May      & Testing, validation, report writing                   &                     \\
+        \hline
+        22            & 28 May          & Final presentation                                    & \checkmark          \\
+        \hline
+        23            & 2 Jun           & Code + report submission                              & \checkmark          \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+\section{Tentative Report Outline}
+\begin{itemize}
+    \item \textbf{Introduction:} Overview of the project, its background, and objectives.
+    \item \textbf{Methodology:} Detailed description of the methods and technologies used in the project, including system architecture and design decisions.
+    \item \textbf{Problem Analysis:} In-depth analysis of the problem being addressed, including any challenges or constraints encountered during development.
+    \item \textbf{Requirements}: Comprehensive list of functional and non-functional requirements, along with any changes or updates made during the project.
+    \item \textbf{Design}: Explanation of the system architecture, components, and interactions, supported by diagrams and illustrations.
+    \item \textbf{Implementation:} Explanation of the development process, challenges faced, and how they were addressed.
+    \item \textbf{Validation:} Discussion of how the results were validated, including testing methodologies and any limitations of the validation process.
+    \item \textbf{Conclusion:} Summary of the project achievements and final thoughts.
+\end{itemize}
+
+\end{document}
