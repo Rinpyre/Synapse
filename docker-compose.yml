@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    build: ./database
+    container_name: sqlserver2019
+    ports:
+      - "${MSSQL_PORT}:1433"
+    environment:
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_PID: ${MSSQL_PID}
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
