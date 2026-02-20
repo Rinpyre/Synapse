@@ -1,0 +1,10 @@
+out
+dist
+node_modules
+vendor
+database/DATASET1
+database/DATASET2
+pnpm-lock.yaml
+tsconfig.json
+tsconfig.*.json
+*.html
