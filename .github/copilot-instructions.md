@@ -61,9 +61,9 @@ Use component/area name in parentheses. Examples:
 - Types: feat, fix, perf, refactor, style, chore, docs, test
 - Scope: Specific component, feature, or area (not folder name)
 - Examples:
-    - ❌ feat(components): Update stuff
-    - ✅ feat(LogViewer): Add expandable log detail panel
-    - ✅ fix(QueryAPI): Handle empty natural language queries correctly
+  - ❌ feat(components): Update stuff
+  - ✅ feat(LogViewer): Add expandable log detail panel
+  - ✅ fix(QueryAPI): Handle empty natural language queries correctly
 
 ### Description Structure
 
@@ -121,7 +121,7 @@ Do NOT include:
 - Assign to `FireBoy00` for notification
 - Request review from team member(s)
 - Note: Author approval does not count toward merge requirements
-    > **Important:** As of now, this is a solo project, so, all PRs will be assigned to `FireBoy00` and reviewed by `FireBoy00`. In the future, when more contributors join, we will update this guideline to reflect the new review process.
+  > **Important:** As of now, this is a solo project, so, all PRs will be assigned to `FireBoy00` and reviewed by `FireBoy00`. In the future, when more contributors join, we will update this guideline to reflect the new review process.
 
 ### PR Size & Scope
 
@@ -136,10 +136,10 @@ When using `gh pr create` or `gh pr edit` with markdown content containing backt
 - ❌ **DO NOT** escape backticks with `\`` in the `--body` flag - the CLI will remove or mangle them
 - ❌ **DO NOT** use `--body` flag for content with backticks - shell escaping causes issues
 - ✅ **DO** use `--body-file` to pass PR body from a temporary markdown file instead
-    - Create temp file with markdown content using `Out-File` or similar
-    - Pass to `gh pr edit/create` with `--body-file pr_body.md`
-    - Delete temp file after command completes
-    - This preserves backticks and all markdown formatting perfectly
+  - Create temp file with markdown content using `Out-File` or similar
+  - Pass to `gh pr edit/create` with `--body-file pr_body.md`
+  - Delete temp file after command completes
+  - This preserves backticks and all markdown formatting perfectly
 
 Example:
 
