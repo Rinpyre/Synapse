@@ -128,42 +128,35 @@ Build a containerized AI-powered system that enables support staff and customers
 \end{itemize}
 
 \section{Methods}
-To achieve the project objectives, we will make use of the following methods and technologies:
+To achieve the project objectives, we have deviated from the original suggested tech stack by opting for Laravel instead of ASP.NET since our team has more experience with that framework. Making use of the following methods and tools:
 \begin{itemize}
-    \item \textit{Agile Development:} We will follow an agile development approach, working in weekly iterative sprints along with regular team and mentor meetings.
+    \item \textit{Agile Development:}  We will follow an agile development approach, working in weekly iterative sprints along with regular team and mentor meetings.
     \item \textit{Version Control:} We will use Git for version control to manage our codebase and collaborate effectively as a team.
     \item \textit{GitHub:} We will host our code on GitHub, utilizing features such as issues, pull requests, and project boards to organize our work and track progress.
+    \item \textit{Github Projects:} We will use a Github Project board to manage our tasks and milestones. This will allow us to track our progress, assign tasks and get our tasks done on deadline.
     \item \textit{Discord:} We will use Discord for team communication and coordination, ensuring that all team members are aligned and can easily share updates and discuss project-related matters.
-    \item \textit{Project Management Tool:} We will use a Github Project board to manage our tasks and milestones. This will allow us to track our progress, assign tasks and get our tasks done on deadline.
-    \item \textit{AI Models:} We will leverage large language models (LLMs) such as GPT-4 or LLaMA for natural language processing tasks, including log summarization and anomaly detection.
-    \item \textit{Ollama:} This tool will be used to manage and swap between different LLMs without requiring significant code changes.
-    \item \textit{Docker:} We will use Docker to containerize the application, ensuring consistency across development, testing, and production environments.
-    \item \textit{Laravel:} This PHP framework will be used to develop the REST API backend that handles user queries and interacts with the AI models.
-    \item \textit{React:} The frontend will be built using React to create a responsive and user-friendly interface for viewing logs and inputting queries.
-    \item \textit{MSSQL:} We will use Microsoft SQL Server for any necessary relational data storage, such as user information or log metadata.
-    \item \textit{MongoDB (Optional):} If we choose to implement data persistence for saving or sharing query results, we will use MongoDB as our database solution.
 \end{itemize}
-\textbf{Note:} \textit{We have deviated from the original suggested tech stack by opting for Laravel instead of ASP.NET since our team has more experience with that framework.}
 
 \section{Architecture}
-The system will be designed using a microservice architecture, with the following components:
+The system will be designed using a microservice architecture, with the following components and their respective technologies:
 \begin{itemize}
-    \item \textbf{Frontend} (\texttt{/frontend}): A frontend that provides the user interface for viewing logs, inputting queries, and displaying AI-generated responses.
-    \item \textbf{Backend} (\texttt{/backend}): A php framework that serves as the REST API, handling user requests, processing queries, and interacting with the AI models and databases.
-    \item \textbf{AI Service} (\texttt{/ai}): A separate service responsible for managing interactions with the LLMs, processing log data, and generating responses based on user queries. \\
+    \item \textbf{Frontend} (\texttt{/frontend}): Web application that provides the user interface for viewing logs, inputting queries, and displaying AI-generated responses.
+    \item \textbf{Backend} (\texttt{/backend}): Backend framework that serves as the REST API, handling user requests, processing queries, and interacting with the AI models and databases.
+    \item \textbf{AI Service} (\texttt{/ai}): Separated service responsible for managing interactions with the LLMs, processing log data, and generating responses based on user queries. \\
           \textit{This service should not impact the backend's ability to function if the AI models are unavailable, and should be designed to handle such scenarios gracefully.}
-    \item \textbf{Database} (\texttt{/database}): An SQL Server instance for storing any necessary relational data, and optionally unstructured database instance for saving query results if that feature is implemented.
+    \item \textbf{Database} (\texttt{/database}): An SQL Server instance for storing any necessary relational data, and optionally an unstructured database instance for saving query results if that feature is implemented.
     \item \textbf{Containerization} (\texttt{/docker-compose.yml}): Docker will be used to containerize all components of the system, ensuring that they can be easily deployed and run in any environment.
 \end{itemize}
 \subsection{Tech Stack Overview}
 \begin{itemize}
-   \item \textit{AI Models:} We will leverage large language models (LLMs) such as GPT-4 or LLaMA for natural language processing tasks, including log summarization and anomaly detection.
+    \item \textit{AI Models:} We will leverage large language models (LLMs) such as GPT-4 or LLaMA for natural language processing tasks, including log summarization and anomaly detection.
     \item \textit{Ollama:} This tool will be used to manage and swap between different LLMs without requiring significant code changes.
     \item \textit{Laravel:} This PHP framework will be used to develop the REST API backend that handles user queries and interacts with the AI models.
     \item \textit{React:} The frontend will be built using React to create a responsive and user-friendly interface for viewing logs and inputting queries.
     \item \textit{MSSQL:} We will use Microsoft SQL Server for any necessary relational data storage, such as user information or log metadata.
+    \item \textit{Docker:} We will use Docker to containerize the application, ensuring consistency across development, testing, and production environments.
     \item \textit{MongoDB (Optional):} If we choose to implement data persistence for saving or sharing query results, we will use MongoDB as our database solution.
-\end{itemize} 
+\end{itemize}
 
 \textbf{\textit{TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)}}
 % TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)
