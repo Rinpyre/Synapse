@@ -90,10 +90,20 @@
 
 % ===== CONTENT BEGINS HERE =====
 \section{Project Background}
-SpeedAdmin is a leading provider of specialised software solutions tailored for music and art schools. Their cutting-edge platform streamlines administrative processes and facilitates seamless communication for the schools, enhancing efficiency and effectiveness. Their logs on students, teachers, lectures, instruments, etc. are verbose in nature, making them often difficult to understand for their support and customers' needs alike. We are looking to implement a system to help them improve their overview and the usefulness of own logs to the customer and support teams, leveraging the possibilities offered by AI prompting, and machine learning.
+
+SpeedAdmin develops administrative software for music and art schools. The system manages entities such as students, teachers, lessons, and instruments, and automatically generates logs to record system events and changes.
+
+These logs are essential for traceability and support, but they are highly detailed and often difficult to interpret. A single issue may involve many related log entries across different entities, making it challenging to gain a clear overview. As described in the project case, the logs are granular and verbose, and important information can easily be overlooked.
+
+This creates a practical challenge for both support staff and customers. Understanding log data in a specific context currently requires manual analysis and technical knowledge, which can be time-consuming and inefficient. Therefore, there is a need for a solution that can transform raw log data into structured, understandable insights that better support real-world troubleshooting and analysis.
+
 
 \section{Aim}
-Build a containerized AI-powered system that enables support staff and customers to query SpeedAdmin resource logs in natural language, delivering summaries, anomaly detection, and pattern analysis to improve log comprehension and operational insights.
+The aim of this project is to design and implement a containerised intelligent software system that enables natural language querying and automated analysis of SpeedAdmin's resource logs.
+
+Users should be able to describe what they are trying to understand in plain language. Based on this input, the system will identify relevant log entries, generate concise summaries, explain them clearly, and highlight potential anomalies or points of interest.
+
+The solution will follow a modular and model-agnostic architecture, ensuring that AI components adhere to defined input and output interfaces and can be replaced without major changes to the overall system. The project will demonstrate how intelligent software components can be integrated into a real-world enterprise environment, in line with the given objectives of the course.
 
 \section{Objectives}
 \begin{itemize}
