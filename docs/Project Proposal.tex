@@ -118,14 +118,12 @@ The solution will follow a modular and model-agnostic architecture, ensuring tha
 \section{Requirements Analysis}
 \subsection{Functional Requirements}
 \begin{itemize}
-    \item \textit{Log Ingestion:} The system must be able to ingest and process log data from SpeedAdmin's existing logging infrastructure.
     \item \textit{Natural Language Querying:} Users should be able to query the logs using natural language prompts, and the system should return relevant summaries, insights, or anomaly detections based on the query.
     \item \textit{Model-Agnostic AI Pipeline:} The system should be designed to allow for easy swapping of underlying LLMs (e.g., GPT-4, LLaMA) via Ollama without requiring significant changes to the codebase.
     \item \textit{Containerization:} The entire system should be containerized using Docker to ensure consistency across different environments and ease of deployment.
     \item \textit{REST API Backend:} A RESTful API should be developed using Laravel to handle user queries, interact with the AI models, and manage data storage if necessary.
     \item \textit{Frontend Interface:} A user-friendly frontend should be developed using React to allow users to view logs, input queries, and receive responses from the AI system.
     \item \textit{Optional Data Persistence:} If implemented, the system should allow users to save or share their query results, which would require integration with a database such as MongoDB.
-    \item \textit{Security and Access Control:} The system should implement appropriate security measures to protect sensitive log data and ensure that only authorized users can access the system, such as authentication.
 \end{itemize}
 \subsection{Non-Functional Requirements}
 \begin{itemize}
@@ -134,6 +132,8 @@ The solution will follow a modular and model-agnostic architecture, ensuring tha
     \item \textit{Usability:} The frontend interface should be intuitive and easy to navigate, allowing users of varying technical expertise to effectively utilize the system.
     \item \textit{Maintainability:} The codebase should be well-documented and structured to facilitate easy maintenance and future enhancements.
     \item \textit{Reliability:} The system should be robust and able to handle errors gracefully, ensuring that it remains operational even in the face of unexpected issues.
+    \item \textit{Security and Access Control:} The system should implement appropriate security measures to protect sensitive log data and ensure that only authorized users can access the system, such as authentication.
+    \item \textit{Log Ingestion:} The system must be able to ingest and process log data from SpeedAdmin's existing logging infrastructure.
 \end{itemize}
 
 \section{Methods}
