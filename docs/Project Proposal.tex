@@ -98,7 +98,7 @@ These logs are essential for traceability and support, but they are highly detai
 This creates a practical challenge for both support staff and customers. Understanding log data in a specific context currently requires manual analysis and technical knowledge, which can be time-consuming and inefficient. Therefore, there is a need for a solution that can transform raw log data into structured, understandable insights that better support real-world troubleshooting and analysis.
 
 
-\section{Aim}
+\section{Aim} \label{sec:aim}
 To address the aforementioned issues in \cref{sec:problem} our aim for this project is to design and implement a containerised intelligent software system that enables natural language querying and automated analysis of SpeedAdmin's resource logs.
 
 Users should be able to describe what they are trying to understand in plain language. Based on this input, the system will identify relevant log entries, generate concise summaries, explain them clearly, and highlight potential anomalies or points of interest.
@@ -106,7 +106,9 @@ Users should be able to describe what they are trying to understand in plain lan
 The solution will follow a modular architecture, ensuring that AI components adhere to defined input and output interfaces and can be replaced without major changes to the overall system. The project will demonstrate how intelligent software components can be integrated into a real-world enterprise environment, in line with the given objectives of the course.
 
 \section{Objectives}
-\textbf{Note:} Objectives marked with an asterisk ({\color{red}\textbf{*}}) are considered core objectives that we aim to achieve, while the others are additional features that we will implement if time allows.
+
+To realize the vision outlined in \cref{sec:aim}, we have defined the following objectives. These represent the concrete deliverables and capabilities that the system must provide. Core objectives (marked with *) focus on the essential functionality required for a functional, AI-powered log analysis system capable of meeting SpeedAdmin's requirements, while additional objectives extend the system with enhanced usability and data management features that will be prioritized based on development timeline.
+
 \begin{itemize}
     \item AI-powered log summarization and anomaly detection based on user prompts{\color{red}\textbf{*}}
     \item Model-agnostic AI pipeline (swappable LLMs via Ollama){\color{red}\textbf{*}}
