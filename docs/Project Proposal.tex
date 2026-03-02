@@ -139,6 +139,7 @@ The following requirements define what the system must do and the qualities it m
     \item \textit{Reliability:} The system should handle errors gracefully and remain operational in the face of unexpected conditions, including AI service unavailability.
     \item \textit{Maintainability:} The codebase should be structured to facilitate future changes, with components decoupled sufficiently that one can be modified without breaking others.
     \item \textit{Security:} Sensitive log data must be protected in transit and at rest, and access must be restricted to authenticated and authorised users.
+    \item \textit{Regulatory Compliance (GDPR):} The system must not transmit any log data to external or cloud-based services for AI processing. All inference must be performed locally to ensure compliance with GDPR, as log data may contain personally identifiable information.
     \item \textit{Model-Agnostic AI Pipeline:} The AI layer should be designed so that the underlying LLM (e.g., Llama 3, Qwen) can be swapped via Ollama without requiring changes to the rest of the system.
     \item \textit{Containerisation:} All components must be containerised using Docker to ensure environment consistency and ease of deployment.
 \end{itemize}
@@ -195,6 +196,9 @@ The following technologies have been selected to fulfil each component of the ar
 \end{itemize}
 
 \section{Risks and Mitigation Strategies}
+
+The following risks have been identified as potential challenges during the development and deployment of the system. Each risk is accompanied by a mitigation strategy aimed at reducing its likelihood or limiting its impact on project outcomes.
+
 \begin{itemize}
     \item \textbf{AI Model Performance:} The performance of the AI models may not meet expectations, leading to inaccurate or irrelevant responses.
 
@@ -204,11 +208,9 @@ The following technologies have been selected to fulfil each component of the ar
 
           \textbf{Mitigation:} We will design the system with scalability in mind, implementing strategies such as log filtering, summarisation and chunking to manage large volumes of data, and optimising the AI pipeline to handle increased load efficiently.
 
-    \item \textbf{Ollama performance on available hardware:} The performance of Ollama may be limited by the hardware resources available, which could impact the responsiveness of the AI service.
+    \item \textbf{LLM performance on available hardware:} The language models may be constrained by the available hardware resources, particularly VRAM and compute capacity, which could lead to slow inference times or an inability to run larger models altogether.
 
-          \textbf{Mitigation:} We will test early and often to ensure that Ollama performs as expected on our available hardware, and we will resort to using quantized models if necessary to improve performance while still maintaining acceptable response quality.
-
-          \textbf{Note:} \textit{The system should never use cloud-based LLMs to comply with GDPR regulations, so we will need to ensure that our local setup is sufficient for our needs.}
+          \textbf{Mitigation:} We will test early and often to ensure that the selected models perform acceptably on our available hardware, and we will fall back to quantized model variants where necessary to reduce resource requirements while maintaining acceptable response quality. Additionally, we will implement a request queuing mechanism so that concurrent AI requests are handled gracefully without overloading the inference pipeline.
 
     \item \textbf{Team unfamiliarity with technologies:} Some team members may be unfamiliar with certain technologies or frameworks used in the project, which could lead to delays or challenges in development.
 
