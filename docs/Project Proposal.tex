@@ -14,6 +14,7 @@
 
 \geometry{margin=1in}
 \setlength{\headheight}{17.2pt}
+\definecolor{orange}{rgb}{1.0, 0.494, 0.153}
 
 % Header and footer setup
 \pagestyle{fancy}
@@ -177,19 +178,21 @@ The system will be designed using a microservice architecture, with the followin
     \item \textbf{Database} (\texttt{/database}): A relational database instance for storing any necessary structured data, and optionally an unstructured database instance for saving query results if that feature is implemented.
     \item \textbf{Containerisation}: All components of the system will be containerised, ensuring that they can be easily deployed and run in any environment.
 \end{itemize}
+
+{\color{orange}\textbf{\textit{TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)}}}
+% TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)
+
 \subsection{Tech Stack Overview}
+The following technologies have been selected to fulfil each component of the architecture described above.
 \begin{itemize}
-    \item \textit{AI Models:} We will leverage large language models (LLMs) such as GPT-4 or LLaMA for natural language processing tasks, including log summarisation and anomaly detection.
+    \item \textit{AI Models:} We will leverage large language models (LLMs) such as Llama 3 or Qwen 2.5, for natural language processing tasks, including log summarisation and anomaly detection.
     \item \textit{Ollama:} This tool will be used to manage and swap between different LLMs without requiring significant code changes.
     \item \textit{Laravel:} This PHP framework will be used to develop the REST API backend that handles user queries and interacts with the AI models.
     \item \textit{React:} The frontend will be built using React to create a responsive and user-friendly interface for viewing logs and inputting queries.
-    \item \textit{MSSQL:} We will use Microsoft SQL Server for any necessary relational data storage, such as user information or log metadata.
+    \item \textit{MSSQL:} Microsoft SQL Server will be used for any necessary relational data storage, such as user information or log metadata.
     \item \textit{Docker:} We will use Docker to containerise the application, ensuring consistency across development, testing, and production environments.
     \item \textit{MongoDB (Optional):} If we choose to implement data persistence for saving or sharing query results, we will use MongoDB as our database solution.
 \end{itemize}
-
-\textbf{\textit{TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)}}
-% TODO: Add diagrams illustrating the architecture and interactions between components. (e.g., a high-level system architecture diagram, sequence diagrams for user interactions, deployment diagrams showing how the containers are orchestrated, etc.)
 
 \section{Risks and Mitigation Strategies}
 \begin{itemize}
