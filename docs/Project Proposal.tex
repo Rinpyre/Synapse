@@ -107,12 +107,12 @@ The solution will follow a modular architecture, ensuring that AI components adh
 
 \section{Objectives}
 
-To realize the vision outlined in \cref{sec:aim}, we have defined the following objectives. These represent the concrete deliverables and capabilities that the system must provide. Core objectives (marked with *) focus on the essential functionality required for a functional, AI-powered log analysis system capable of meeting SpeedAdmin's requirements, while additional objectives extend the system with enhanced usability and data management features that will be prioritized based on development timeline.
+To realise the vision outlined in \cref{sec:aim}, we have defined the following objectives. These represent the concrete deliverables and capabilities that the system must provide. Core objectives (marked with *) focus on the essential functionality required for a functional, AI-powered log analysis system capable of meeting SpeedAdmin's requirements, while additional objectives extend the system with enhanced usability and data management features that will be prioritised based on development timeline.
 
 \begin{itemize}
-    \item AI-powered log summarization and anomaly detection based on user prompts{\color{red}\textbf{*}}
+    \item AI-powered log summarisation and anomaly detection based on user prompts{\color{red}\textbf{*}}
     \item Model-agnostic AI pipeline (swappable LLMs via Ollama){\color{red}\textbf{*}}
-    \item Containerized microservice architecture (Docker){\color{red}\textbf{*}}
+    \item Containerised microservice architecture (Docker){\color{red}\textbf{*}}
     \item REST API backend (Laravel){\color{red}\textbf{*}}
     \item React frontend for log viewing and prompting
     \item Optional: saving/sharing prompt results (MongoDB)
@@ -123,7 +123,7 @@ To realize the vision outlined in \cref{sec:aim}, we have defined the following 
 \begin{itemize}
     \item \textit{Natural Language Querying:} Users should be able to query the logs using natural language prompts, and the system should return relevant summaries, insights, or anomaly detections based on the query.
     \item \textit{Model-Agnostic AI Pipeline:} The system should be designed to allow for easy swapping of underlying LLMs (e.g., GPT-4, LLaMA) via Ollama without requiring significant changes to the codebase.
-    \item \textit{Containerization:} The entire system should be containerized using Docker to ensure consistency across different environments and ease of deployment.
+    \item \textit{Containerisation:} The entire system should be containerised using Docker to ensure consistency across different environments and ease of deployment.
     \item \textit{REST API Backend:} A RESTful API should be developed using Laravel to handle user queries, interact with the AI models, and manage data storage if necessary.
     \item \textit{Frontend Interface:} A user-friendly frontend should be developed using React to allow users to view logs, input queries, and receive responses from the AI system.
     \item \textit{Optional Data Persistence:} If implemented, the system should allow users to save or share their query results, which would require integration with a database such as MongoDB.
@@ -132,7 +132,7 @@ To realize the vision outlined in \cref{sec:aim}, we have defined the following 
 \begin{itemize}
     \item \textit{Performance:} The system should provide responses to user queries within an acceptable time frame (e.g., under 5 seconds) to ensure a smooth user experience.
     \item \textit{Scalability:} The system should be designed to handle increasing volumes of log data and user queries without significant degradation in performance.
-    \item \textit{Usability:} The frontend interface should be intuitive and easy to navigate, allowing users of varying technical expertise to effectively utilize the system.
+    \item \textit{Usability:} The frontend interface should be intuitive and easy to navigate, allowing users of varying technical expertise to effectively utilise the system.
     \item \textit{Maintainability:} The codebase should be well-documented and structured to facilitate easy maintenance and future enhancements.
     \item \textit{Reliability:} The system should be robust and able to handle errors gracefully, ensuring that it remains operational even in the face of unexpected issues.
     \item \textit{Security and Access Control:} The system should implement appropriate security measures to protect sensitive log data and ensure that only authorized users can access the system, such as authentication.
@@ -144,7 +144,7 @@ To achieve the project objectives, we have deviated from the original suggested 
 \begin{itemize}
     \item \textit{Agile Development:}  We will follow an agile development approach, working in weekly iterative sprints along with regular team and mentor meetings.
     \item \textit{Version Control:} We will use Git for version control to manage our codebase and collaborate effectively as a team.
-    \item \textit{GitHub:} We will host our code on GitHub, utilizing features such as issues, pull requests, and project boards to organize our work and track progress.
+    \item \textit{GitHub:} We will host our code on GitHub, utilising features such as issues, pull requests, and project boards to organise our work and track progress.
     \item \textit{Github Projects:} We will use a Github Project board to manage our tasks and milestones. This will allow us to track our progress, assign tasks and get our tasks done on deadline.
     \item \textit{Discord:} We will use Discord for team communication and coordination, ensuring that all team members are aligned and can easily share updates and discuss project-related matters.
 \end{itemize}
@@ -157,16 +157,16 @@ The system will be designed using a microservice architecture, with the followin
     \item \textbf{AI Service} (\texttt{/ai}): Separated service responsible for managing interactions with the LLMs, processing log data, and generating responses based on user queries. \\
           \textit{This service should not impact the backend's ability to function if the AI models are unavailable, and should be designed to handle such scenarios gracefully.}
     \item \textbf{Database} (\texttt{/database}): An SQL Server instance for storing any necessary relational data, and optionally an unstructured database instance for saving query results if that feature is implemented.
-    \item \textbf{Containerization} (\texttt{/docker-compose.yml}): Docker will be used to containerize all components of the system, ensuring that they can be easily deployed and run in any environment.
+    \item \textbf{Containerisation} (\texttt{/docker-compose.yml}): Docker will be used to containerise all components of the system, ensuring that they can be easily deployed and run in any environment.
 \end{itemize}
 \subsection{Tech Stack Overview}
 \begin{itemize}
-    \item \textit{AI Models:} We will leverage large language models (LLMs) such as GPT-4 or LLaMA for natural language processing tasks, including log summarization and anomaly detection.
+    \item \textit{AI Models:} We will leverage large language models (LLMs) such as GPT-4 or LLaMA for natural language processing tasks, including log summarisation and anomaly detection.
     \item \textit{Ollama:} This tool will be used to manage and swap between different LLMs without requiring significant code changes.
     \item \textit{Laravel:} This PHP framework will be used to develop the REST API backend that handles user queries and interacts with the AI models.
     \item \textit{React:} The frontend will be built using React to create a responsive and user-friendly interface for viewing logs and inputting queries.
     \item \textit{MSSQL:} We will use Microsoft SQL Server for any necessary relational data storage, such as user information or log metadata.
-    \item \textit{Docker:} We will use Docker to containerize the application, ensuring consistency across development, testing, and production environments.
+    \item \textit{Docker:} We will use Docker to containerise the application, ensuring consistency across development, testing, and production environments.
     \item \textit{MongoDB (Optional):} If we choose to implement data persistence for saving or sharing query results, we will use MongoDB as our database solution.
 \end{itemize}
 
@@ -177,11 +177,11 @@ The system will be designed using a microservice architecture, with the followin
 \begin{itemize}
     \item \textbf{AI Model Performance:} The performance of the AI models may not meet expectations, leading to inaccurate or irrelevant responses.
 
-          \textbf{Mitigation:} We will make use of prompt engineering techniques to optimize the performance of the AI models, and we will conduct thorough output testing and validation to ensure that the responses generated by the models are accurate and relevant to user queries.
+          \textbf{Mitigation:} We will make use of prompt engineering techniques to optimise the performance of the AI models, and we will conduct thorough output testing and validation to ensure that the responses generated by the models are accurate and relevant to user queries.
 
     \item \textbf{Scalability Issues:} As the volume of log data and user queries increases, it may exceed the model's context window or lead to performance degradation.
 
-          \textbf{Mitigation:} We will design the system with scalability in mind, implementing strategies such as log filtering, summarization and chunking to manage large volumes of data, and optimizing the AI pipeline to handle increased load efficiently.
+          \textbf{Mitigation:} We will design the system with scalability in mind, implementing strategies such as log filtering, summarisation and chunking to manage large volumes of data, and optimising the AI pipeline to handle increased load efficiently.
 
     \item \textbf{Ollama performance on available hardware:} The performance of Ollama may be limited by the hardware resources available, which could impact the responsiveness of the AI service.
 
@@ -191,7 +191,7 @@ The system will be designed using a microservice architecture, with the followin
 
     \item \textbf{Team unfamiliarity with technologies:} Some team members may be unfamiliar with certain technologies or frameworks used in the project, which could lead to delays or challenges in development.
 
-          \textbf{Mitigation:} We will allocate time for team members to learn and familiarize themselves with any new technologies, and we will encourage knowledge sharing and collaboration within the team to ensure that everyone is up to speed.
+          \textbf{Mitigation:} We will allocate time for team members to learn and familiarise themselves with any new technologies, and we will encourage knowledge sharing and collaboration within the team to ensure that everyone is up to speed.
 \end{itemize}
 
 \section{Project Organization}
@@ -204,13 +204,13 @@ The project will be developed by a team of 6 members with the following roles an
 
     \item \textbf{Frontend Developers} (Dorina, Tomass, Jakub): Build the React application, design the user interface, and ensure an optimal user experience.
 
-    \item \textbf{AI Specialists} (Balazs): Manage LLM interactions via Ollama, optimize prompts, and validate the accuracy and relevance of AI-generated responses.
+    \item \textbf{AI Specialists} (Balazs): Manage LLM interactions via Ollama, optimise prompts, and validate the accuracy and relevance of AI-generated responses.
 
-    \item \textbf{DevOps Engineer} (team-wide responsibility): Containerize the application using Docker, configure development and production environments, and manage deployment processes.
+    \item \textbf{DevOps Engineer} (team-wide responsibility): Containerise the application using Docker, configure development and production environments, and manage deployment processes.
 
 \end{itemize}
 
-We will use GitHub for version control and project management, utilizing branches with prefixes (e.g., \texttt{feature/}, \texttt{bugfix/}, \texttt{docs/}) to organize our work. We will also use GitHub Pull Requests for code reviews and merging, and we will maintain a project board to track tasks and progress. We will use Discord for team communication, scheduling regular meetings to discuss progress, address challenges, and plan next steps.
+We will use GitHub for version control and project management, utilising branches with prefixes (e.g., \texttt{feature/}, \texttt{bugfix/}, \texttt{docs/}) to organise our work. We will also use GitHub Pull Requests for code reviews and merging, and we will maintain a project board to track tasks and progress. We will use Discord for team communication, scheduling regular meetings to discuss progress, address challenges, and plan next steps.
 
 \textbf{Note:} \textit{While specific roles are assigned, all team members will collaborate and contribute across different areas of the project as needed to ensure its success.}
 
