@@ -174,8 +174,8 @@ The system will be designed using a microservice architecture, with the followin
     \item \textbf{Backend} (\texttt{/backend}): Backend framework that serves as the REST API, handling user requests, processing queries, and interacting with the AI models and databases.
     \item \textbf{AI Service} (\texttt{/ai}): Separated service responsible for managing interactions with the LLMs, processing log data, and generating responses based on user queries. \\
           \textit{This service should not impact the backend's ability to function if the AI models are unavailable, and should be designed to handle such scenarios gracefully.}
-    \item \textbf{Database} (\texttt{/database}): An SQL Server instance for storing any necessary relational data, and optionally an unstructured database instance for saving query results if that feature is implemented.
-    \item \textbf{Containerisation} (\texttt{/docker-compose.yml}): Docker will be used to containerise all components of the system, ensuring that they can be easily deployed and run in any environment.
+    \item \textbf{Database} (\texttt{/database}): A relational database instance for storing any necessary structured data, and optionally an unstructured database instance for saving query results if that feature is implemented.
+    \item \textbf{Containerisation}: All components of the system will be containerised, ensuring that they can be easily deployed and run in any environment.
 \end{itemize}
 \subsection{Tech Stack Overview}
 \begin{itemize}
