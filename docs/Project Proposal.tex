@@ -119,24 +119,27 @@ To realise the vision outlined in \cref{sec:aim}, we have defined the following 
 \end{itemize}
 
 \section{Requirements Analysis}
-\subsection{Functional Requirements}
+
+The following requirements define what the system must do and the qualities it must demonstrate. Functional requirements capture what users can do with the system, while non-functional requirements constrain how it must behave.
+
+\subsection{Functional Requirements} % What the user should be able to do with the system
 \begin{itemize}
-    \item \textit{Natural Language Querying:} Users should be able to query the logs using natural language prompts, and the system should return relevant summaries, insights, or anomaly detections based on the query.
-    \item \textit{Model-Agnostic AI Pipeline:} The system should be designed to allow for easy swapping of underlying LLMs (e.g., GPT-4, LLaMA) via Ollama without requiring significant changes to the codebase.
-    \item \textit{Containerisation:} The entire system should be containerised using Docker to ensure consistency across different environments and ease of deployment.
-    \item \textit{REST API Backend:} A RESTful API should be developed using Laravel to handle user queries, interact with the AI models, and manage data storage if necessary.
-    \item \textit{Frontend Interface:} A user-friendly frontend should be developed using React to allow users to view logs, input queries, and receive responses from the AI system.
-    \item \textit{Optional Data Persistence:} If implemented, the system should allow users to save or share their query results, which would require integration with a database such as MongoDB.
-\end{itemize}
-\subsection{Non-Functional Requirements}
-\begin{itemize}
-    \item \textit{Performance:} The system should provide responses to user queries within an acceptable time frame (e.g., under 5 seconds) to ensure a smooth user experience.
-    \item \textit{Scalability:} The system should be designed to handle increasing volumes of log data and user queries without significant degradation in performance.
-    \item \textit{Usability:} The frontend interface should be intuitive and easy to navigate, allowing users of varying technical expertise to effectively utilise the system.
-    \item \textit{Maintainability:} The codebase should be well-documented and structured to facilitate easy maintenance and future enhancements.
-    \item \textit{Reliability:} The system should be robust and able to handle errors gracefully, ensuring that it remains operational even in the face of unexpected issues.
-    \item \textit{Security and Access Control:} The system should implement appropriate security measures to protect sensitive log data and ensure that only authorized users can access the system, such as authentication.
     \item \textit{Log Ingestion:} The system must be able to ingest and process log data from SpeedAdmin's existing logging infrastructure.
+    \item \textit{Log Viewing:} Users should be able to browse and view log entries through the frontend interface, with the ability to filter or search through them.
+    \item \textit{Natural Language Querying:} Users should be able to submit natural language prompts against the log data, and the system should return relevant summaries, insights, or detected anomalies in response.
+    \item \textit{User Authentication:} Users must authenticate before accessing the system to ensure that only authorised personnel can view or query sensitive log data.
+    \item \textit{Optional Data Persistence:} If implemented, users should be able to save or share query results, requiring a database solution (e.g., MongoDB) to store this information.
+\end{itemize}
+\subsection{Non-Functional Requirements} % How the system should perform or behave
+\begin{itemize}
+    \item \textit{Performance:} The system should respond to user queries within an acceptable time frame (e.g., under 5 seconds) to ensure a smooth user experience.
+    \item \textit{Scalability:} The system should handle increasing volumes of log data and concurrent queries without significant performance degradation.
+    \item \textit{Usability:} The interface should be straightforward enough for users of varying technical expertise to operate without prior training.
+    \item \textit{Reliability:} The system should handle errors gracefully and remain operational in the face of unexpected conditions, including AI service unavailability.
+    \item \textit{Maintainability:} The codebase should be structured to facilitate future changes, with components decoupled sufficiently that one can be modified without breaking others.
+    \item \textit{Security:} Sensitive log data must be protected in transit and at rest, and access must be restricted to authenticated and authorised users.
+    \item \textit{Model-Agnostic AI Pipeline:} The AI layer should be designed so that the underlying LLM (e.g., Llama 3, Qwen) can be swapped via Ollama without requiring changes to the rest of the system.
+    \item \textit{Containerisation:} All components must be containerised using Docker to ensure environment consistency and ease of deployment.
 \end{itemize}
 
 \section{Methods}
