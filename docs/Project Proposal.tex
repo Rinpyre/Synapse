@@ -142,15 +142,30 @@ The following requirements define what the system must do and the qualities it m
     \item \textit{Containerisation:} All components must be containerised using Docker to ensure environment consistency and ease of deployment.
 \end{itemize}
 
-\section{Methods}
-To achieve the project objectives, we have deviated from the original suggested tech stack by opting for Laravel instead of ASP.NET since our team has more experience with that framework. Making use of the following methods and tools:
+\section{Methodology}
+This section outlines the development approach, processes, and tools used throughout the project to ensure structured progress, quality assurance, and effective coordination between all stakeholders.
+
+\subsection{Agile Development and the V-Model}
+The project adopts an agile development methodology adapted to the V-Model, striking a balance between iterative delivery and structured verification at each stage. Rather than following a strictly sequential process, the team works in weekly sprints, each encompassing requirements refinement, design decisions, and implementation --- mirroring the left-hand descending side of the V-Model --- followed by corresponding testing and validation activities on the ascending right-hand side.
+
+This structure is reinforced by the project's three-tier stakeholder hierarchy, which maps naturally onto the V-Model:
 \begin{itemize}
-    \item \textit{Agile Development:}  We will follow an agile development approach, working in weekly iterative sprints along with regular team and mentor meetings.
-    \item \textit{Version Control:} We will use Git for version control to manage our codebase and collaborate effectively as a team.
-    \item \textit{GitHub:} We will host our code on GitHub, utilising features such as issues, pull requests, and project boards to organise our work and track progress.
-    \item \textit{Github Projects:} We will use a Github Project board to manage our tasks and milestones. This will allow us to track our progress, assign tasks and get our tasks done on deadline.
-    \item \textit{Discord:} We will use Discord for team communication and coordination, ensuring that all team members are aligned and can easily share updates and discuss project-related matters.
+    \item \textit{Requirements and acceptance criteria} are defined in collaboration with SpeedAdmin and continuously validated through weekly supervisor meetings, forming the outermost level of the V --- requirements elicitation on the left, client acceptance verification on the right.
+    \item \textit{System-level design and integration milestones} are overseen by the academic coordinator at the formal checkpoint events defined in the project plan, corresponding to system-level design review and integration testing.
+    \item \textit{Implementation and unit testing} are carried out internally by the team of six at the base of the V, within each weekly sprint iteration.
 \end{itemize}
+
+Each week, the team holds a brief meeting with the project supervisor (Niklas Braun, SpeedAdmin) on a designated day to review progress and gather feedback on the direction of the work. The team's internal sprint meeting follows immediately after on the same day --- the team simply moves rooms --- allowing any feedback to be addressed in the same session. The academic coordinator is met at the formal milestone points outlined in the project plan, which serve as structured evaluation and system-level validation checkpoints.
+
+\subsection{Version Control and Project Management}
+All source code is managed using Git and hosted on GitHub. Changes are introduced through branches following naming conventions (e.g., \texttt{feature/}, \texttt{bugfix/}, \texttt{docs/}) and merged via pull requests, which serve as the primary mechanism for peer code review and quality control before integration.
+
+Project tasks and milestones are tracked using GitHub Issues and a GitHub Projects board, providing the team with a shared view of the development backlog, sprint progress, and upcoming deadlines. Tasks are assigned to specific team members to ensure clear ownership and accountability throughout the project lifecycle.
+
+\subsection{Communication}
+Discord serves as the team's primary communication platform. The workspace is structured around a small set of focused channels: a main channel for general coordination and day-to-day discussion, a dedicated channel for supervisor-related communications, and a resources-and-links channel for sharing references and materials. Two voice channels are available for meetings and ad-hoc peer coding sessions.
+
+Meeting scheduling is handled organically in the main channel. For the recurring weekly supervisor meeting, Discord's built-in Events feature is used to set a standing event on the designated day, giving all team members a persistent reminder. The team's internal sprint meeting is scheduled immediately after and in the same manner, as the two sessions run back-to-back.
 
 \section{Architecture}
 The system will be designed using a microservice architecture, with the following components and their respective technologies:
