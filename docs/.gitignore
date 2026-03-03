@@ -1,0 +1,11 @@
+# Ignore exverything except directories
+*
+!**/
+
+# Except these files
+!.gitignore
+!*.md
+!*.tex
+
+# Except these directories
+!images/*
