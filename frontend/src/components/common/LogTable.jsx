@@ -1,7 +1,6 @@
 export default function LogTable() {
     return (
         <div className="log-table w-full p-3">
-            {/* bordered, striped, full-width, centered text, has separating lines*/}
             <table className="table table-bordered table-striped w-full text-center text-snow">
                 <thead>
                     <tr>
