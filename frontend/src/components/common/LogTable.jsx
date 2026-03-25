@@ -1,14 +1,14 @@
 export default function LogTable() {
     return (
         <div className="log-table w-full p-3">
-            <table className="table table-bordered table-striped w-full text-center text-snow">
+            <table className="table table-auto table-bordered table-striped w-full text-center text-snow">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Timestamp</th>
-                        <th scope="col">Actor</th>
-                        <th scope="col">Entity Type</th>
-                        <th scope="col">Action</th>
+                        <th>ID</th>
+                        <th>Timestamp</th>
+                        <th>Actor</th>
+                        <th>Entity Type</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>

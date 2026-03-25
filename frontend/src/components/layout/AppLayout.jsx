@@ -1,5 +1,4 @@
-import Sidebar from "./Sidebar"
-import Topbar from "./Topbar"
+import {Sidebar, Topbar} from '@components'
 
 export default function AppLayout({ children }) {
     return (
