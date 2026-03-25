@@ -1,3 +1,5 @@
 .env
 node_modules
 *.log*
+DATASET1
+DATASET2
