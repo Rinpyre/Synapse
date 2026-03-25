@@ -44,3 +44,22 @@
   --shadow-sm: 0 2px 6px rgba(0,0,0,0.3);
   --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
 }
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background: var(--color-primary);
+    color: var(--color-snow);
+  }
+
+  body {
+    font-size: var(--text-base);
+  }
+
+  h1 { font-size: var(--text-3xl); }
+  h2 { font-size: var(--text-2xl); }
+  h3 { font-size: var(--text-xl); }
+}
