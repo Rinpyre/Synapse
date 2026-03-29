@@ -1,15 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { HomePage, NotFoundPage } from '@routes'
-import AppLayout from '@components/layout/AppLayout'
-import LogTable from '@components/layout/LogTable'
+import { AppLayout } from '@components'
+import { LogTable } from '@components'
 
 function App() {
     return (
         <BrowserRouter>
             <AppLayout>
                 <Routes>
+                    <Route path="/" element={<HomePage />} />
                     <Route
-                        path="/"
+                        path="/logs"
                         element={
                             <LogTable
                                 rows={[
