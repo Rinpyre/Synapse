@@ -1,6 +1,6 @@
 import { Sidebar, Topbar } from '@components'
 
-export default function AppLayout({ children }) {
+export const AppLayout = ({ children }) => {
     return (
         <div className="app bg-primary flex h-screen w-full">
             <Sidebar />

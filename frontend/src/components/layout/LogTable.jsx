@@ -1,4 +1,4 @@
-export function LogTable({ rows, columns }) {
+export const LogTable = ({ rows, columns }) => {
     return (
         <div className="flex w-full grow justify-center overflow-hidden">
             <div className="content-view bg-secondary flex h-180 w-7xl rounded-4xl">
