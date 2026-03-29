@@ -4,7 +4,7 @@ printWidth: 100
 trailingComma: none
 tabWidth: 4
 overrides:
-  - files: '*.{yaml,yml,json,md,config.js}'
+  - files: '*.{yaml,yml,json,jsonc,md,config.js}'
     options:
       tabWidth: 2
   - files: ['docker-compose.{yml,yaml}', 'compose.{yml,yaml}']
