@@ -1,0 +1,7 @@
+[
+  { "ID": "id of the user" },
+  { "Timestamp": "timestamp of the log entry" },
+  { "Actor": "the actor involved" },
+  { "Entity Type": "the type of entity" },
+  { "Action": "the action performed" }
+]

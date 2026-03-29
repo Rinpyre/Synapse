@@ -1,2 +1,5 @@
 export * from './notFound'
 export * from './home'
+export * from './logsView'
+export * from './account'
+export * from './settings'
