@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
+    /** Colors */
     --color-primary: #0f172a; /* Dark Navy - Background */
     --color-secondary: #1e293b; /* Slate - Cards/Nav */
     --color-tertiary: #334155; /* Slate Blue - Hover/Active States */
@@ -12,10 +13,36 @@
     --color-accent-dark: #c2410c; /* Dark Orange - Active */
     --color-success: #22c55e; /* Green - Success/Confirm */
     --color-error: #f04438; /* Red - Error/Danger/Delete */
-}
 
+    /** Fonts */
+    --font-sans: 'Inter', var(--font-sans);
+    --font-mono: 'SF Mono', var(--font-mono);
+
+    /** Transitions */
+    --duration-fast: 150ms;
+    --duration-base: 200ms;
+
+    /** Shadows */
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
 @layer base {
     :root {
         color-scheme: dark;
+    }
+
+    html {
+        background: var(--color-primary);
+        color: var(--color-snow);
+    }
+
+    h1 {
+        @apply text-3xl font-bold;
+    }
+    h2 {
+        @apply text-2xl font-bold;
+    }
+    h3 {
+        @apply text-xl font-semibold;
     }
 }
