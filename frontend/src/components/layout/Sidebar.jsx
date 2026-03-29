@@ -1,5 +1,3 @@
 export function Sidebar() {
-    return (
-        <div className="sidebar bg-secondary w-3xs h-full"/>
-    )
+    return <div className="sidebar bg-secondary h-full w-3xs" />
 }

@@ -1,7 +1,7 @@
 export function Topbar() {
     return (
-        <div className="topbar flex justify-start items-center w-full h-10.5">
-            <h1 className="text-snow text-lg font-bold ml-1.75">Synapse</h1>
+        <div className="topbar flex h-10.5 w-full items-center justify-start">
+            <h1 className="text-snow ml-1.75 text-lg font-bold">Synapse</h1>
         </div>
     )
 }
