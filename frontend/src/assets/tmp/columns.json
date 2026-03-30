@@ -1,0 +1,7 @@
+[
+  { "label": "ID", "key": "id" },
+  { "label": "Timestamp", "key": "timestamp" },
+  { "label": "Actor", "key": "actor" },
+  { "label": "Entity Type", "key": "entityType" },
+  { "label": "Action", "key": "action" }
+]

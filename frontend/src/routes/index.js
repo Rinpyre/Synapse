@@ -1,2 +1,5 @@
-export { NotFoundPage } from './notFound'
-export { HomePage } from './home'
+export * from './notFound'
+export * from './home'
+export * from './logsView'
+export * from './account'
+export * from './settings'

@@ -1,17 +1,19 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { HomePage, NotFoundPage } from '@routes'
+import { HomePage, LogsViewPage, SettingsPage, AccountPage, NotFoundPage } from '@routes'
+import { AppLayout } from '@components'
 
 function App() {
     return (
         <BrowserRouter>
-            <div className="app bg-primary flex h-screen w-full">
-                <div className="flex w-full grow items-center justify-center overflow-hidden">
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
-                </div>
-            </div>
+            <AppLayout>
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/logs" element={<LogsViewPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/account" element={<AccountPage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+            </AppLayout>
         </BrowserRouter>
     )
 }
