@@ -13,9 +13,9 @@ const multiplyRows = (rows, multiplier) => {
 
 export const LogsViewPage = () => {
     return (
-        <div className="logs-view-page flex h-full w-full flex-col items-center gap-8 p-8">
-            <h1 className="text-snow text-2xl font-bold">Logs View</h1>
-            <DataTable rows={multiplyRows(rows, 1)} columns={columns} />
+        <div className="logs-view-page flex h-full w-full flex-col items-center gap-2 p-8 pt-1.5">
+            <h2 className="text-snow text-2xl font-bold">Logs View</h2>
+            <DataTable rows={multiplyRows(rows, 100)} columns={columns} />
         </div>
     )
 }
