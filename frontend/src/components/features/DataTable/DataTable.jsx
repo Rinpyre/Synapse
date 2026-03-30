@@ -22,7 +22,7 @@ const sortData = (data, columnKey, direction) => {
     return sortedData
 }
 
-export const DataTable = ({ rows, columns, limit = 20 }) => {
+export const DataTable = ({ rows, columns, limit = 20, loading, error }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: null })
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(limit)
@@ -86,11 +86,15 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
     return (
         <div className="content-view bg-tertiary w-full rounded-lg p-2">
             <div className="loading">
-                {rows.length === 0 && (
+                {loading ? (
                     <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
                         <span className="text-snow/80 text-sm">Loading...</span>
                     </div>
-                )}
+                ) : error ? (
+                    <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
+                        <span className="text-error text-sm">{error}</span>
+                    </div>
+                ) : null}
             </div>
             <table className="w-full table-auto border-collapse">
                 <thead>
