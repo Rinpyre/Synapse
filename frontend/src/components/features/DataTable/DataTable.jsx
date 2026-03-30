@@ -87,7 +87,7 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
         <div className="content-view bg-tertiary w-full rounded-lg p-2">
             <table className="w-full table-auto border-collapse">
                 <thead>
-                    <tr className="border-snow/20 border-b">
+                    <tr className="border-snow/20 bg-tertiary/80 sticky top-0 z-1 border-b backdrop-blur-sm">
                         {columns.map((column, index) => (
                             <th
                                 key={index}
