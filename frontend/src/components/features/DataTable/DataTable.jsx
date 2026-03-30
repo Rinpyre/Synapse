@@ -212,7 +212,7 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
                                 <button
                                     key={page}
                                     className={cn(
-                                        'h-6 w-6 rounded-md text-sm font-medium transition-all duration-200',
+                                        'flex h-6 min-w-6 items-center rounded-md p-1 text-sm font-medium transition-all duration-200',
                                         currentPage === page
                                             ? 'bg-secondary/70 text-snow'
                                             : 'text-snow/70 hover:bg-snow/10 cursor-pointer'
