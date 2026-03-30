@@ -154,7 +154,7 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
                         id="itemsPerPage"
                         value={itemsPerPage}
                         onChange={handleItemsPerPageChange}
-                        className="border-snow/30 bg-secondary/40 text-snow hover:border-snow/60 rounded-md border px-3 py-2 text-sm transition-all outline-none"
+                        className="border-snow/30 bg-secondary/40 text-snow hover:border-snow/60 rounded-md border p-1 text-sm transition-all outline-none"
                     >
                         <option value="5">5</option>
                         <option value="10">10</option>
