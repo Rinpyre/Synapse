@@ -10,3 +10,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return response()->json(['message' => 'Welcome to Synapse']);
 });
+
+Route::get('/logs', [\App\Http\Controllers\LogController::class, 'index']);
