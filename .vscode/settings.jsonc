@@ -11,7 +11,12 @@
   "files.eol": "\n",
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "file": ".github/copilot-commit-instructions.md"
+      "file": ".github\\instructions\\commit-instructions.md"
+    }
+  ],
+  "github.copilot.chat.prCreation.instructions": [
+    {
+      "file": ".github\\instructions\\pr-instructions.md"
     }
   ]
 }

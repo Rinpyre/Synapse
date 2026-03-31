@@ -1,17 +1,15 @@
-# Copilot Guidelines for Synapse
-
-## Commit Message Rules (ALWAYS FOLLOW)
+# Commit Message Rules (ALWAYS FOLLOW)
 
 1. Read the code changes carefully
 2. Determine the TYPE of change
 3. Identify the SCOPE if applicable
 4. Write clear, concise description
 
-### Format
+## Format
 
 `<type>(<scope>): <subject>`
 
-### Types (Must Use)
+## Types (Must Use)
 
 - `feat:` - New feature
 - `fix:` - Bug fix
@@ -22,7 +20,7 @@
 - `docs:` - Documentation
 - `test:` - Tests
 
-### Scope (Optional but Recommended)
+## Scope (Optional but Recommended)
 
 Use component/area name in parentheses. Examples:
 
@@ -32,7 +30,7 @@ Use component/area name in parentheses. Examples:
 - `chore(docker):` - Docker / containerization config
 - `chore(package.json):` - Dependencies
 
-### Subject Line Guidelines
+## Subject Line Guidelines
 
 - ✅ Brief summary of changes
 - ✅ The changes should be presented as featured focused (human said) not component / code focused
@@ -42,7 +40,7 @@ Use component/area name in parentheses. Examples:
 - ✅ If multiple or complex changes, combine all in one summary and detail in body / description
 - ❌ No duplication of scope name in the summery if already in scope
 
-### Description / Body Rules
+## Description / Body Rules
 
 - ✅ Explain the "why" and "what", not the "how"
 - ✅ Imperative mood: "add" not "added"
