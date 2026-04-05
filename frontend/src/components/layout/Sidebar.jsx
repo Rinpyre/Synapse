@@ -4,6 +4,7 @@ import {
     Home,
     Logs,
     Bolt as Settings,
+    DatabaseSearch as Query,
     CircleUser as Account,
     PanelRightOpen as ToggleBtnOpen,
     PanelRightClose as ToggleBtnClose
@@ -13,6 +14,7 @@ const items = [
     { label: 'Home', icon: Home, route: '/' },
     { label: 'devider' },
     { label: 'Logs', icon: Logs, route: '/logs' },
+    { label: 'Query', icon: Query, route: '/query' },
     { label: 'space' },
     { label: 'Settings', icon: Settings, route: '/settings' },
     { label: 'Account', icon: Account, route: '/account' }
