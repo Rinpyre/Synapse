@@ -22,7 +22,13 @@ const sortData = (data, columnKey, direction) => {
     return sortedData
 }
 
-export const DataTable = ({ rows, columns, limit = 20, loading, error }) => {
+export const DataTable = ({
+    rows = [],
+    columns = [],
+    limit = 20,
+    loading = false,
+    error = 'No data has been passed to the table component.'
+}) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: null })
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(limit)
