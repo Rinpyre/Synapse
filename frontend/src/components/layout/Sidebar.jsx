@@ -5,6 +5,7 @@ import {
     MessageCircle as AI,
     Logs,
     Bolt as Settings,
+    DatabaseSearch as Query,
     CircleUser as Account,
     PanelRightOpen as ToggleBtnOpen,
     PanelRightClose as ToggleBtnClose
@@ -13,6 +14,7 @@ import {
 const items = [
     { label: 'Home', icon: Home, route: '/' },
     { label: 'Logs', icon: Logs, route: '/logs' },
+    { label: 'Query', icon: Query, route: '/query' },
     { label: 'devider' },
     { label: 'AI', icon: AI, route: '/ai' },
     { label: 'space' },
