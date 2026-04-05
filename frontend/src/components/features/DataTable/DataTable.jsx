@@ -109,8 +109,8 @@ export const DataTable = ({ rows = [], columns = [], limit = 20, loading = false
                                 key={column.key || index}
                                 className="text-snow group/header border-snow/20 border-r p-2 text-left text-sm font-medium tracking-wider uppercase last:border-r-0"
                             >
-                                <div
-                                    className="flex items-center"
+                                <button
+                                    className="flex w-full items-center"
                                     onClick={() => handleSort(column.key)}
                                     title={`Sort by ${column.label}`}
                                 >
@@ -134,7 +134,7 @@ export const DataTable = ({ rows = [], columns = [], limit = 20, loading = false
                                             className="text-snow/50 invisible ml-1 inline-block cursor-pointer group-hover/header:visible"
                                         />
                                     )}
-                                </div>
+                                </button>
                             </th>
                         ))}
                     </tr>
