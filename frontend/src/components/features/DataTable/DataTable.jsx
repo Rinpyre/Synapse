@@ -22,13 +22,7 @@ const sortData = (data, columnKey, direction) => {
     return sortedData
 }
 
-export const DataTable = ({
-    rows = [],
-    columns = [],
-    limit = 20,
-    loading = false,
-    error = 'No data has been passed to the table component.'
-}) => {
+export const DataTable = ({ rows = [], columns = [], limit = 20, loading = false, error = '' }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: null })
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(limit)
@@ -45,6 +39,11 @@ export const DataTable = ({
     }
 
     const sortedRows = sortData(rows, sortConfig.key, sortConfig.direction)
+    const errorMessage =
+        error ||
+        (rows.length === 0 && columns.length === 0 && !loading
+            ? 'No data has been passed to the table component.'
+            : '')
 
     // Calculate pagination values
     const totalPages = Math.ceil(sortedRows.length / itemsPerPage)
@@ -96,9 +95,9 @@ export const DataTable = ({
                     <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
                         <span className="text-snow/80 text-sm">Loading...</span>
                     </div>
-                ) : error ? (
+                ) : errorMessage ? (
                     <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
-                        <span className="text-error text-sm">{error}</span>
+                        <span className="text-error text-sm">{errorMessage}</span>
                     </div>
                 ) : null}
             </div>
