@@ -40,7 +40,7 @@ export const QueryPage = () => {
                     className="w-full rounded bg-secondary p-2 text-snow resize-none"
                     placeholder="Enter your query here..."
                 />
-                <a href="#" className="flex items-center p-0.5 gap-2 text-snow hover:text-blue-500 absolute right-1.25 bottom-1.25">
+                <a href="#" className="flex text-snow hover:bg-snow/20 p-1 rounded items-center absolute right-1.25 bottom-1.25">
                 <Send className="w-5 h-5" /></a>
             </div>
             <DataTable rows = {multiplyRows(TestData.rows, 100)} columns = {TestData.columns} limit = {15} />
