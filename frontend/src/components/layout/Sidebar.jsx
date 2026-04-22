@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
     Home,
+    MessageCircle as AI,
     Logs,
     Bolt as Settings,
     CircleUser as Account,
@@ -11,8 +12,9 @@ import {
 
 const items = [
     { label: 'Home', icon: Home, route: '/' },
-    { label: 'devider' },
     { label: 'Logs', icon: Logs, route: '/logs' },
+    { label: 'devider' },
+    { label: 'AI', icon: AI, route: '/ai' },
     { label: 'space' },
     { label: 'Settings', icon: Settings, route: '/settings' },
     { label: 'Account', icon: Account, route: '/account' }
