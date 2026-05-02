@@ -1,28 +1,28 @@
 {
-    "rows": [
-        {
-            "id": 1,
-            "name": "John Doe",
-            "email": "john.doe@example.com"
-        },
-        {
-            "id": 2,
-            "name": "Jane Smith",
-            "email": "jane.smith@example.com"
-        }
-    ],
-    "columns": [
-        {
-            "key": "id",
-            "label": "ID"
-        },
-        {
-            "key": "name",
-            "label": "Name"
-        },
-        {
-            "key": "email",
-            "label": "Email"
-        }
-    ]
+  "rows": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com"
+    }
+  ],
+  "columns": [
+    {
+      "key": "id",
+      "label": "ID"
+    },
+    {
+      "key": "name",
+      "label": "Name"
+    },
+    {
+      "key": "email",
+      "label": "Email"
+    }
+  ]
 }
