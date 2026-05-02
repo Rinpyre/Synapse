@@ -22,7 +22,7 @@ const sortData = (data, columnKey, direction) => {
     return sortedData
 }
 
-export const DataTable = ({ rows, columns, limit = 20 }) => {
+export const DataTable = ({ rows = [], columns = [], limit = 20, loading = false, error = '' }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: null })
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(limit)
@@ -39,6 +39,11 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
     }
 
     const sortedRows = sortData(rows, sortConfig.key, sortConfig.direction)
+    const errorMessage =
+        error ||
+        (rows.length === 0 && columns.length === 0 && !loading
+            ? 'No data has been passed to the table component.'
+            : '')
 
     // Calculate pagination values
     const totalPages = Math.ceil(sortedRows.length / itemsPerPage)
@@ -85,16 +90,27 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
 
     return (
         <div className="content-view bg-tertiary w-full rounded-lg p-2">
+            <div className="loading">
+                {loading ? (
+                    <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
+                        <span className="text-snow/80 text-sm">Loading...</span>
+                    </div>
+                ) : errorMessage ? (
+                    <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
+                        <span className="text-error text-sm">{errorMessage}</span>
+                    </div>
+                ) : null}
+            </div>
             <table className="w-full table-auto border-collapse">
                 <thead>
                     <tr className="border-snow/20 bg-tertiary/80 sticky top-0 z-1 border-b backdrop-blur-sm">
                         {columns.map((column, index) => (
                             <th
-                                key={index}
+                                key={column.key || index}
                                 className="text-snow group/header border-snow/20 border-r p-2 text-left text-sm font-medium tracking-wider uppercase last:border-r-0"
                             >
-                                <div
-                                    className="flex items-center"
+                                <button
+                                    className="flex w-full items-center"
                                     onClick={() => handleSort(column.key)}
                                     title={`Sort by ${column.label}`}
                                 >
@@ -118,7 +134,7 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
                                             className="text-snow/50 invisible ml-1 inline-block cursor-pointer group-hover/header:visible"
                                         />
                                     )}
-                                </div>
+                                </button>
                             </th>
                         ))}
                     </tr>
@@ -126,7 +142,7 @@ export const DataTable = ({ rows, columns, limit = 20 }) => {
                 <tbody className="text-snow/80">
                     {paginatedRows.map((row, rindex) => (
                         <tr
-                            key={rindex}
+                            key={row.logId || row.id || rindex}
                             className={cn(
                                 'border-snow/20 hover:bg-snow/10 border-b',
                                 rindex % 2 === 0 && 'bg-snow/5'
