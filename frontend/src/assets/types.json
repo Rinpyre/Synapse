@@ -1,0 +1,50 @@
+[
+  {
+    "Value": "None",
+    "EntityId": 0
+  },
+  {
+    "Value": "Student",
+    "EntityId": 1
+  },
+  {
+    "Value": "Teacher",
+    "EntityId": 2
+  },
+  {
+    "Value": "Room",
+    "EntityId": 3
+  },
+  {
+    "Value": "Equipment",
+    "EntityId": 4
+  },
+  {
+    "Value": "Parent",
+    "EntityId": 10
+  },
+  {
+    "Value": "School",
+    "EntityId": 13
+  },
+  {
+    "Value": "User",
+    "EntityId": 14
+  },
+  {
+    "Value": "Course",
+    "EntityId": 972
+  },
+  {
+    "Value": "Booking",
+    "EntityId": 973
+  },
+  {
+    "Value": "Base Course",
+    "EntityId": 975
+  },
+  {
+    "Value": "Booking (Legacy)",
+    "EntityId": 978
+  }
+]

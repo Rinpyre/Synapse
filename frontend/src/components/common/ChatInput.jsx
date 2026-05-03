@@ -26,14 +26,15 @@ export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
     useEffect(() => {
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto'
-            textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + 'px'
+            textareaRef.current.style.height =
+                Math.min(textareaRef.current.scrollHeight, 120) + 'px'
         }
     }, [input])
 
     return (
         <div className="flex flex-col gap-2">
             {error && (
-                <div className="flex items-center gap-2 rounded-lg bg-error/10 px-3 py-2 text-error">
+                <div className="bg-error/10 text-error flex items-center gap-2 rounded-lg px-3 py-2">
                     <AlertCircle size={16} />
                     <span className="text-sm">{error}</span>
                 </div>
@@ -45,14 +46,14 @@ export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     disabled={isDisabled}
-                    placeholder="Type your question here..."
-                    className="flex-1 resize-none overflow-hidden rounded-lg border border-border bg-secondary px-4 py-2 text-snow placeholder-metadata disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-0"
+                    placeholder="Describe what to analyze"
+                    className="border-border bg-secondary text-snow placeholder-metadata focus:border-accent flex-1 resize-none overflow-hidden rounded-lg border px-4 py-1.5 outline-none disabled:opacity-50"
                     rows={1}
                 />
                 <button
                     type="submit"
                     disabled={isDisabled || !input.trim()}
-                    className="bg-accent hover:bg-accent-light disabled:bg-accent-dark flex items-center justify-center rounded-lg p-2 text-primary transition-colors"
+                    className="bg-accent hover:bg-accent-light disabled:bg-accent-dark text-primary flex items-center justify-center rounded-lg p-2 transition-colors"
                     aria-label="Send message"
                 >
                     <Send size={20} />

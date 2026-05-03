@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { MessageList, ChatInput } from '@components'
 
-export const AIPage = () => {
+export const AiChat = () => {
     const [messages, setMessages] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -40,21 +40,17 @@ export const AIPage = () => {
     }
 
     return (
-        <div className="ai-page flex h-full w-full flex-col items-center gap-2 p-8 pt-1.5">
-            <h2 className="text-snow text-2xl font-bold">AI Assistant</h2>
-            
-
-            <div className="flex flex-1 flex-col w-full overflow-hidden rounded-lg border border-border bg-secondary">
-                <div className="flex-1 overflow-y-auto p-4">
+        <div className="ai-page bg-secondary border-border flex h-full w-full flex-col items-center gap-2 border-l p-4">
+            <h2 className="text-snow border-border flex w-[80%] justify-center border-b pb-2 text-xl font-bold">
+                Simon - AI Analytics Assistant
+            </h2>
+            <div className="flex w-full flex-1 flex-col">
+                <div className="flex-1 overflow-y-auto pt-4">
                     <MessageList messages={messages} isLoading={isLoading} />
                 </div>
 
-                <div className="border-t border-border p-4">
-                    <ChatInput
-                        onSend={handleSendMessage}
-                        isDisabled={isLoading}
-                        error={error}
-                    />
+                <div className="border-border border-t pt-4">
+                    <ChatInput onSend={handleSendMessage} isDisabled={isLoading} error={error} />
                 </div>
             </div>
         </div>
