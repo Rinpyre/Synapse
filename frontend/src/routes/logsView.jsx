@@ -134,7 +134,7 @@ export const LogsViewPage = () => {
                 </h2>
 
                 <div
-                    className="border-border bg-secondary flex w-full cursor-text items-center gap-2 rounded border px-3 py-2"
+                    className="border-border bg-secondary focus-within:border-accent flex w-full cursor-text items-center gap-2 rounded border px-3 py-2"
                     onClick={
                         // Focus the input when clicking the container
                         () => {
