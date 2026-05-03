@@ -2,6 +2,8 @@
   "name": "synapse",
   "private": true,
   "scripts": {
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "cd ./backend && php artisan serve",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
