@@ -33,6 +33,7 @@ Use component/area name in parentheses. Examples:
 ## Subject Line Guidelines
 
 - ✅ Brief summary of changes
+- ✅ Start with UPPERCASE verb (e.g. "Add", "Fix", "Update")
 - ✅ The changes should be presented as featured focused (human said) not component / code focused
 - ✅ Use imperative mood
 - ✅ No period at end
