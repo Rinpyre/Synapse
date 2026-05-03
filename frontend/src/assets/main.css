@@ -46,3 +46,14 @@
         @apply text-xl font-semibold;
     }
 }
+
+@layer utilities {
+    .scroll-none {
+        overflow: auto;
+        scrollbar-width: none;
+    }
+
+    .scroll-none::-webkit-scrollbar {
+        display: none;
+    }
+}
