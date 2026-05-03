@@ -41,10 +41,14 @@ export const Sidebar = ({ open = false }) => {
                             title={item.label}
                             key={index}
                             to={item.route}
-                            className="text-snow hover:bg-snow/20 flex w-full items-center gap-4 rounded-lg p-2"
+                            className="text-snow hover:bg-snow/20 flex w-full items-center gap-4 rounded-lg p-2 transition-all duration-300"
                         >
-                            <Icon size={20} />
-                            {isOpen && <span>{item.label}</span>}
+                            <Icon size={20} className="shrink-0" />
+                            <span
+                                className={`overflow-hidden transition-all duration-300 ${isOpen ? 'w-auto opacity-100' : 'w-0 opacity-0'}`}
+                            >
+                                {item.label}
+                            </span>
                         </Link>
                     )
                 })}
