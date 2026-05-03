@@ -22,7 +22,14 @@ const sortData = (data, columnKey, direction) => {
     return sortedData
 }
 
-export const DataTable = ({ rows = [], columns = [], limit = 20, loading = false, error = '' }) => {
+export const DataTable = ({
+    rows = [],
+    columns = [],
+    limit = 20,
+    loading = false,
+    error = '',
+    bodyMaxHeight = '70vh'
+}) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: null })
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(limit)
@@ -89,7 +96,7 @@ export const DataTable = ({ rows = [], columns = [], limit = 20, loading = false
     }
 
     return (
-        <div className="content-view bg-tertiary w-full rounded-lg p-2">
+        <div className="content-view bg-secondary border-snow/20 w-full rounded border">
             <div className="loading">
                 {loading ? (
                     <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
@@ -101,186 +108,195 @@ export const DataTable = ({ rows = [], columns = [], limit = 20, loading = false
                     </div>
                 ) : null}
             </div>
-            <table className="w-full table-auto border-collapse">
-                <thead>
-                    <tr className="border-snow/20 bg-tertiary/80 sticky top-0 z-1 border-b backdrop-blur-sm">
-                        {columns.map((column, index) => (
-                            <th
-                                key={column.key || index}
-                                className="text-snow group/header border-snow/20 border-r p-2 text-left text-sm font-medium tracking-wider uppercase last:border-r-0"
-                            >
-                                <button
-                                    className="flex w-full items-center"
-                                    onClick={() => handleSort(column.key)}
-                                    title={`Sort by ${column.label}`}
+
+            <div className="overflow-auto" style={{ maxHeight: bodyMaxHeight }}>
+                <table className="w-full table-auto border-collapse">
+                    <thead>
+                        <tr className="border-snow/20 bg-tertiary/80 sticky top-0 z-1 border-b backdrop-blur-sm">
+                            {columns.map((column, index) => (
+                                <th
+                                    key={column.key || index}
+                                    className="text-snow group/header border-snow/20 border-r p-2 text-left text-sm font-medium tracking-wider whitespace-nowrap uppercase last:border-r-0"
                                 >
-                                    {column.label}
-                                    <div className="grow"></div>
-                                    {sortConfig.key === column.key && sortConfig.direction ? (
-                                        sortConfig.direction === 'asc' ? (
-                                            <SortAsc
-                                                size={16}
-                                                className="text-snow ml-1 inline-block cursor-pointer"
-                                            />
+                                    <button
+                                        className="flex w-full items-center"
+                                        onClick={() => handleSort(column.key)}
+                                        title={`Sort by ${column.label}`}
+                                    >
+                                        {column.label}
+                                        <div className="grow"></div>
+                                        {sortConfig.key === column.key && sortConfig.direction ? (
+                                            sortConfig.direction === 'asc' ? (
+                                                <SortAsc
+                                                    size={16}
+                                                    className="text-snow ml-1 inline-block cursor-pointer"
+                                                />
+                                            ) : (
+                                                <SortDesc
+                                                    size={16}
+                                                    className="text-snow ml-1 inline-block cursor-pointer"
+                                                />
+                                            )
                                         ) : (
-                                            <SortDesc
+                                            <ArrowUpDown
                                                 size={16}
-                                                className="text-snow ml-1 inline-block cursor-pointer"
+                                                className="text-snow/50 invisible ml-1 inline-block cursor-pointer group-hover/header:visible"
                                             />
-                                        )
-                                    ) : (
-                                        <ArrowUpDown
-                                            size={16}
-                                            className="text-snow/50 invisible ml-1 inline-block cursor-pointer group-hover/header:visible"
-                                        />
-                                    )}
-                                </button>
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className="text-snow/80">
-                    {paginatedRows.map((row, rindex) => (
-                        <tr
-                            key={row.logId || row.id || rindex}
-                            className={cn(
-                                'border-snow/20 hover:bg-snow/10 border-b',
-                                rindex % 2 === 0 && 'bg-snow/5'
-                            )}
-                        >
-                            {columns.map((column) => (
-                                <td
-                                    key={column.key}
-                                    className="border-snow/20 border-r p-2 text-sm last:border-r-0"
-                                >
-                                    {row[column.key]}
-                                </td>
+                                        )}
+                                    </button>
+                                </th>
                             ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            <div className="mt-2 flex items-center justify-between gap-4 px-2">
-                {/* Left side: Items per page selector */}
-                <div className="flex items-center gap-3">
-                    <label htmlFor="itemsPerPage" className="text-snow/70 text-sm">
-                        Show:
-                    </label>
-                    <select
-                        id="itemsPerPage"
-                        value={itemsPerPage}
-                        onChange={handleItemsPerPageChange}
-                        className="border-snow/30 bg-secondary/40 text-snow hover:border-snow/60 rounded-md border p-1 text-sm transition-all outline-none"
-                    >
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
+                    </thead>
+                    <tbody className="text-snow/80">
+                        {paginatedRows.map((row, rindex) => (
+                            <tr
+                                key={row.logId || row.id || rindex}
+                                className={cn(
+                                    'border-snow/20 hover:bg-snow/10 border-b',
+                                    rindex % 2 === 0 && 'bg-snow/5'
+                                )}
+                            >
+                                {columns.map((column) => (
+                                    <td
+                                        key={column.key}
+                                        className="border-snow/20 border-r p-2 text-sm whitespace-nowrap last:border-r-0"
+                                    >
+                                        {row[column.key]}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-                {/* Right side: Pagination controls */}
-                <div className="flex items-center gap-2">
-                    {/* Jump back 10 button (if many pages) */}
-                    {totalPages > 20 && (
+            {!(loading || errorMessage) && (
+                <div className="flex items-center justify-between gap-4 p-2">
+                    {/* Left side: Items per page selector */}
+                    <div className="flex items-center gap-3">
+                        <label htmlFor="itemsPerPage" className="text-snow/70 text-sm">
+                            Show:
+                        </label>
+                        <select
+                            id="itemsPerPage"
+                            value={itemsPerPage}
+                            onChange={handleItemsPerPageChange}
+                            className="border-snow/30 bg-secondary/40 text-snow hover:border-snow/60 rounded-md border p-1 text-sm transition-all outline-none"
+                        >
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+
+                    {/* Right side: Pagination controls */}
+                    <div className="flex items-center gap-2">
+                        {/* Jump back 10 button (if many pages) */}
+                        {totalPages > 20 && (
+                            <button
+                                className={cn(
+                                    'text-snow/70 transition-all duration-200',
+                                    currentPage <= 10
+                                        ? 'invisible cursor-not-allowed opacity-50'
+                                        : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
+                                )}
+                                onClick={() => setCurrentPage((p) => Math.max(1, p - 10))}
+                                disabled={currentPage <= 10}
+                                title="Back 10 pages"
+                            >
+                                <JumpBack10 size={16} />
+                            </button>
+                        )}
+
+                        {/* Previous button */}
                         <button
                             className={cn(
-                                'text-snow/70 transition-all duration-200',
-                                currentPage <= 10
+                                'flex items-center transition-all duration-200',
+
+                                currentPage === 1
                                     ? 'invisible cursor-not-allowed opacity-50'
                                     : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
                             )}
-                            onClick={() => setCurrentPage((p) => Math.max(1, p - 10))}
-                            disabled={currentPage <= 10}
-                            title="Back 10 pages"
+                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            title="Previous page"
                         >
-                            <JumpBack10 size={16} />
+                            <PrevPage size={16} />
                         </button>
-                    )}
 
-                    {/* Previous button */}
-                    <button
-                        className={cn(
-                            'flex items-center transition-all duration-200',
+                        {/* Page numbers */}
+                        <div className="flex items-center gap-1">
+                            {getPageNumbers().map((page, idx) =>
+                                page === '...' ? (
+                                    <span
+                                        key={`ellipsis-${idx}`}
+                                        className="text-snow/50 px-2 py-2"
+                                    >
+                                        ...
+                                    </span>
+                                ) : (
+                                    <button
+                                        key={page}
+                                        className={cn(
+                                            'flex h-6 min-w-6 items-center justify-center rounded-md p-1 text-sm font-medium transition-all duration-200',
+                                            currentPage === page
+                                                ? 'bg-secondary/70 text-snow'
+                                                : 'text-snow/70 hover:bg-snow/10 cursor-pointer'
+                                        )}
+                                        onClick={() => setCurrentPage(page)}
+                                    >
+                                        {page}
+                                    </button>
+                                )
+                            )}
+                        </div>
 
-                            currentPage === 1
-                                ? 'invisible cursor-not-allowed opacity-50'
-                                : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
-                        )}
-                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        title="Previous page"
-                    >
-                        <PrevPage size={16} />
-                    </button>
-
-                    {/* Page numbers */}
-                    <div className="flex items-center gap-1">
-                        {getPageNumbers().map((page, idx) =>
-                            page === '...' ? (
-                                <span key={`ellipsis-${idx}`} className="text-snow/50 px-2 py-2">
-                                    ...
-                                </span>
-                            ) : (
-                                <button
-                                    key={page}
-                                    className={cn(
-                                        'flex h-6 min-w-6 items-center justify-center rounded-md p-1 text-sm font-medium transition-all duration-200',
-                                        currentPage === page
-                                            ? 'bg-secondary/70 text-snow'
-                                            : 'text-snow/70 hover:bg-snow/10 cursor-pointer'
-                                    )}
-                                    onClick={() => setCurrentPage(page)}
-                                >
-                                    {page}
-                                </button>
-                            )
-                        )}
-                    </div>
-
-                    {/* Next button */}
-                    <button
-                        className={cn(
-                            'flex items-center transition-all duration-200',
-                            currentPage === totalPages
-                                ? 'cursor-not-allowed opacity-50'
-                                : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
-                        )}
-                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        title="Next page"
-                    >
-                        <NextPage size={16} />
-                    </button>
-
-                    {/* Jump forward 10 button (if many pages) */}
-                    {totalPages > 20 && (
+                        {/* Next button */}
                         <button
                             className={cn(
-                                'text-snow/70 transition-all duration-200',
-                                currentPage > totalPages - 10
+                                'flex items-center transition-all duration-200',
+                                currentPage === totalPages
                                     ? 'cursor-not-allowed opacity-50'
                                     : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
                             )}
-                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 10))}
-                            disabled={currentPage > totalPages - 10}
-                            title="Forward 10 pages"
+                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            title="Next page"
                         >
-                            <JumpForward10 size={16} />
+                            <NextPage size={16} />
                         </button>
-                    )}
 
-                    {/* Total info */}
-                    <span className="text-snow/60 ml-2 text-sm">
-                        {sortedRows.length > 0 ? startIndex + 1 : 0}-
-                        {Math.min(endIndex, sortedRows.length)} of{' '}
-                        <span className="text-snow font-semibold">{sortedRows.length}</span>
-                    </span>
+                        {/* Jump forward 10 button (if many pages) */}
+                        {totalPages > 20 && (
+                            <button
+                                className={cn(
+                                    'text-snow/70 transition-all duration-200',
+                                    currentPage > totalPages - 10
+                                        ? 'cursor-not-allowed opacity-50'
+                                        : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
+                                )}
+                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 10))}
+                                disabled={currentPage > totalPages - 10}
+                                title="Forward 10 pages"
+                            >
+                                <JumpForward10 size={16} />
+                            </button>
+                        )}
+
+                        {/* Total info */}
+                        <span className="text-snow/60 ml-2 text-sm">
+                            {sortedRows.length > 0 ? startIndex + 1 : 0}-
+                            {Math.min(endIndex, sortedRows.length)} of{' '}
+                            <span className="text-snow font-semibold">{sortedRows.length}</span>
+                        </span>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }
