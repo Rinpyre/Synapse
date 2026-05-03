@@ -25,9 +25,11 @@ Current commonly used labels include:
 
 ## Title Guidelines
 
+- Use UPPERCASE for the first letter of the title.
 - Use an imperative, action-first title.
 - Keep it concise and outcome-oriented.
 - Prefer specific scope in the title.
+- Don't use the `<type>: <scope> - <description>` format; instead, focus on a clear action. (use labels to indicate type and scope)
 
 Examples:
 
