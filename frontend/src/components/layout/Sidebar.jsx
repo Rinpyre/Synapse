@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-    MessageCircle as AI,
+    ChartPie as Logo,
     Bolt as Settings,
     DatabaseSearch as Query,
     CircleUser as Account,
@@ -9,10 +9,12 @@ import {
     PanelRightClose as ToggleBtnClose
 } from 'lucide-react'
 
+// TODO: Implement actual logo along with special logo "type" as per the "devider" item in the items array
+
 const items = [
-    { label: 'Logs', icon: Query, route: '/' },
+    { label: 'Synapse', icon: Logo, route: '/' },
     { label: 'devider' },
-    { label: 'AI', icon: AI, route: '/ai' },
+    { label: 'Logs', icon: Query, route: '/' },
     { label: 'space' },
     { label: 'Settings', icon: Settings, route: '/settings' },
     { label: 'Account', icon: Account, route: '/account' }

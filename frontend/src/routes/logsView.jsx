@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { Search, X } from 'lucide-react'
-import { DataTable } from '@components/features'
+import { DataTable, AiChat } from '@components/features'
 import { multiplyRows } from '@utils'
 import TestData from '@assets/dummyData.json'
 
@@ -44,34 +44,39 @@ export const LogsViewPage = () => {
     }
 
     return (
-        <div className="logs-view-page flex h-full w-full flex-col items-center justify-end gap-2 p-8 pt-1.5">
-            <h2 className="text-snow flex grow items-center p-4 text-2xl font-bold">
-                AI Logs Analyzer
-            </h2>
-            <div className="border-border bg-secondary flex w-full items-center gap-2 rounded border px-3 py-2">
-                <Search className="text-metadata h-5 w-5" />
-                <input
-                    type="text"
-                    value={query}
-                    onChange={onChange}
-                    id="queryTextarea"
-                    className="text-snow placeholder-metadata flex-1 bg-transparent outline-none"
-                    placeholder="Filter by keyword or field"
-                />
-                {query && (
-                    <button
-                        onClick={() => {
-                            setQuery('')
-                            searchQuery('')
-                        }}
-                        className="text-metadata hover:text-accent flex h-6 w-6 items-center justify-center rounded transition-colors"
-                        title="Clear search"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                )}
+        <div className="logs-view-container flex h-full w-full">
+            <div className="logs-view-page flex h-full flex-1 flex-col items-center justify-end gap-2 p-8 pt-1.5">
+                <h2 className="text-snow flex grow items-center p-4 text-2xl font-bold">
+                    AI Logs Analyzer
+                </h2>
+                <div className="border-border bg-secondary flex w-full items-center gap-2 rounded border px-3 py-2">
+                    <Search className="text-metadata h-5 w-5" />
+                    <input
+                        type="text"
+                        value={query}
+                        onChange={onChange}
+                        id="queryTextarea"
+                        className="text-snow placeholder-metadata flex-1 bg-transparent outline-none"
+                        placeholder="Filter by keyword or field"
+                    />
+                    {query && (
+                        <button
+                            onClick={() => {
+                                setQuery('')
+                                searchQuery('')
+                            }}
+                            className="text-metadata hover:text-accent flex h-6 w-6 items-center justify-center rounded transition-colors"
+                            title="Clear search"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    )}
+                </div>
+                <DataTable rows={data.rows} columns={data.columns} limit={15} />
             </div>
-            <DataTable rows={data.rows} columns={data.columns} limit={15} />
+            <div className="ai-sidebar w-1/4">
+                <AiChat />
+            </div>
         </div>
     )
 }
