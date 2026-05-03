@@ -22,30 +22,83 @@ const sortData = (data, columnKey, direction) => {
     return sortedData
 }
 
+const normalizeSize = (value) => {
+    if (value === undefined || value === null || value === '') return null
+    return typeof value === 'number' ? `${value}px` : value
+}
+
+const getColumnSizing = (column) => {
+    const labelLength = column?.label?.length ?? 0
+    const minChars = Math.max(labelLength, 8)
+    const defaultMinWidth = `${minChars}ch`
+    const defaultMaxWidth = `${Math.max(minChars * 2, 28)}ch`
+
+    return {
+        minWidth: normalizeSize(column?.minWidth) ?? defaultMinWidth,
+        maxWidth: normalizeSize(column?.maxWidth) ?? defaultMaxWidth
+    }
+}
+
 export const DataTable = ({
     rows = [],
     columns = [],
     limit = 20,
     loading = false,
     error = '',
-    bodyMaxHeight = '70vh'
+    bodyMaxHeight = '70vh',
+    pagination = null,
+    onPageChange,
+    onPerPageChange,
+    onSortChange
 }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: null })
-    const [currentPage, setCurrentPage] = useState(1)
+    const [clientPage, setClientPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(limit)
 
     const handleSort = (columnKey) => {
         const currentDirection = sortConfig.key === columnKey ? sortConfig.direction : null
         const nextDirection =
             sortOptions[(sortOptions.indexOf(currentDirection) + 1) % sortOptions.length]
-        setSortConfig({ key: columnKey, direction: nextDirection })
+        const nextSort = { key: columnKey, direction: nextDirection }
+        setSortConfig(nextSort)
+        if (onSortChange) {
+            onSortChange(nextSort)
+        }
     }
+
+    const isServerPaginated = Boolean(pagination)
+    const serverPage = pagination?.current_page ?? 1
+    const serverPerPage = pagination?.per_page ?? itemsPerPage
+    const serverTotal = pagination?.total ?? rows.length
+    const serverLastPage = pagination?.last_page
+
+    const page = Math.min(
+        Math.max(isServerPaginated ? serverPage : clientPage, 1),
+        Math.max(1, serverLastPage ?? Math.ceil(serverTotal / serverPerPage))
+    )
+    const perPage = isServerPaginated ? serverPerPage : itemsPerPage
 
     const handleItemsPerPageChange = (e) => {
-        setItemsPerPage(parseInt(e.target.value))
+        const nextPerPage = Number.parseInt(e.target.value, 10)
+        if (isServerPaginated) {
+            if (onPerPageChange) {
+                onPerPageChange(nextPerPage)
+                return
+            }
+            if (onPageChange) {
+                onPageChange(1)
+            }
+            return
+        }
+
+        setItemsPerPage(nextPerPage)
+        setClientPage(1)
     }
 
-    const sortedRows = sortData(rows, sortConfig.key, sortConfig.direction)
+    const shouldSortLocally = !onSortChange
+    const sortedRows = shouldSortLocally
+        ? sortData(rows, sortConfig.key, sortConfig.direction)
+        : rows
     const errorMessage =
         error ||
         (rows.length === 0 && columns.length === 0 && !loading
@@ -53,10 +106,23 @@ export const DataTable = ({
             : '')
 
     // Calculate pagination values
-    const totalPages = Math.ceil(sortedRows.length / itemsPerPage)
-    const startIndex = (currentPage - 1) * itemsPerPage
-    const endIndex = startIndex + itemsPerPage
-    const paginatedRows = sortedRows.slice(startIndex, endIndex)
+    const totalItems = isServerPaginated ? serverTotal : sortedRows.length
+    const totalPages = Math.max(1, serverLastPage ?? Math.ceil(totalItems / perPage))
+    const localStartIndex = (page - 1) * perPage
+    const localEndIndex = localStartIndex + perPage
+    const paginatedRows = isServerPaginated
+        ? sortedRows
+        : sortedRows.slice(localStartIndex, localEndIndex)
+
+    const displayStart = isServerPaginated
+        ? (pagination?.from ?? 0)
+        : sortedRows.length > 0
+          ? localStartIndex + 1
+          : 0
+
+    const displayEnd = isServerPaginated
+        ? (pagination?.to ?? 0)
+        : Math.min(localEndIndex, sortedRows.length)
 
     // Generate page numbers to display intelligently
     const getPageNumbers = () => {
@@ -71,13 +137,13 @@ export const DataTable = ({
             pages.push(1)
 
             // Add ellipsis if gap before current range
-            if (currentPage > 3) {
+            if (page > 3) {
                 pages.push('...')
             }
 
             // Show pages around current
-            const start = Math.max(2, currentPage - 1)
-            const end = Math.min(totalPages - 1, currentPage + 1)
+            const start = Math.max(2, page - 1)
+            const end = Math.min(totalPages - 1, page + 1)
             for (let i = start; i <= end; i++) {
                 if (!pages.includes(i)) {
                     pages.push(i)
@@ -85,7 +151,7 @@ export const DataTable = ({
             }
 
             // Add ellipsis if gap after current range
-            if (currentPage < totalPages - 2) {
+            if (page < totalPages - 2) {
                 pages.push('...')
             }
 
@@ -95,27 +161,29 @@ export const DataTable = ({
         return pages
     }
 
+    const resolvedColumns = columns.map((column) => ({
+        ...column,
+        sizing: getColumnSizing(column)
+    }))
+
     return (
         <div className="content-view bg-secondary border-snow/20 w-full rounded border">
             <div className="loading">
-                {loading ? (
-                    <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
-                        <span className="text-snow/80 text-sm">Loading...</span>
-                    </div>
-                ) : errorMessage ? (
+                {errorMessage ? (
                     <div className="bg-tertiary/80 flex items-center justify-center p-4 backdrop-blur-sm">
                         <span className="text-error text-sm">{errorMessage}</span>
                     </div>
                 ) : null}
             </div>
 
-            <div className="overflow-auto" style={{ maxHeight: bodyMaxHeight }}>
+            <div className="relative overflow-auto" style={{ maxHeight: bodyMaxHeight }}>
                 <table className="w-full table-auto border-collapse">
                     <thead>
                         <tr className="border-snow/20 bg-tertiary/80 sticky top-0 z-1 border-b backdrop-blur-sm">
-                            {columns.map((column, index) => (
+                            {resolvedColumns.map((column, index) => (
                                 <th
                                     key={column.key || index}
+                                    style={column.sizing}
                                     className="text-snow group/header border-snow/20 border-r p-2 text-left text-sm font-medium tracking-wider whitespace-nowrap uppercase last:border-r-0"
                                 >
                                     <button
@@ -157,21 +225,29 @@ export const DataTable = ({
                                     rindex % 2 === 0 && 'bg-snow/5'
                                 )}
                             >
-                                {columns.map((column) => (
+                                {resolvedColumns.map((column, cindex) => (
                                     <td
-                                        key={column.key}
-                                        className="border-snow/20 border-r p-2 text-sm whitespace-nowrap last:border-r-0"
+                                        key={column.key || cindex}
+                                        style={column.sizing}
+                                        className="border-snow/20 border-r p-2 text-sm last:border-r-0"
                                     >
-                                        {row[column.key]}
+                                        <div className="scroll-none w-full overflow-x-auto whitespace-nowrap">
+                                            {row[column.key]}
+                                        </div>
                                     </td>
                                 ))}
                             </tr>
                         ))}
                     </tbody>
                 </table>
+                {loading && (
+                    <div className="bg-tertiary/70 absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm">
+                        <span className="text-snow/80 text-sm">Loading...</span>
+                    </div>
+                )}
             </div>
 
-            {!(loading || errorMessage) && (
+            {!errorMessage && (
                 <div className="flex items-center justify-between gap-4 p-2">
                     {/* Left side: Items per page selector */}
                     <div className="flex items-center gap-3">
@@ -180,7 +256,7 @@ export const DataTable = ({
                         </label>
                         <select
                             id="itemsPerPage"
-                            value={itemsPerPage}
+                            value={perPage}
                             onChange={handleItemsPerPageChange}
                             className="border-snow/30 bg-secondary/40 text-snow hover:border-snow/60 rounded-md border p-1 text-sm transition-all outline-none"
                         >
@@ -201,12 +277,16 @@ export const DataTable = ({
                             <button
                                 className={cn(
                                     'text-snow/70 transition-all duration-200',
-                                    currentPage <= 10
+                                    page <= 10
                                         ? 'invisible cursor-not-allowed opacity-50'
                                         : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
                                 )}
-                                onClick={() => setCurrentPage((p) => Math.max(1, p - 10))}
-                                disabled={currentPage <= 10}
+                                onClick={() =>
+                                    isServerPaginated
+                                        ? onPageChange?.(Math.max(1, page - 10))
+                                        : setClientPage((p) => Math.max(1, p - 10))
+                                }
+                                disabled={page <= 10}
                                 title="Back 10 pages"
                             >
                                 <JumpBack10 size={16} />
@@ -218,12 +298,16 @@ export const DataTable = ({
                             className={cn(
                                 'flex items-center transition-all duration-200',
 
-                                currentPage === 1
+                                page === 1
                                     ? 'invisible cursor-not-allowed opacity-50'
                                     : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
                             )}
-                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                            disabled={currentPage === 1}
+                            onClick={() =>
+                                isServerPaginated
+                                    ? onPageChange?.(Math.max(1, page - 1))
+                                    : setClientPage((p) => Math.max(1, p - 1))
+                            }
+                            disabled={page === 1}
                             title="Previous page"
                         >
                             <PrevPage size={16} />
@@ -231,8 +315,8 @@ export const DataTable = ({
 
                         {/* Page numbers */}
                         <div className="flex items-center gap-1">
-                            {getPageNumbers().map((page, idx) =>
-                                page === '...' ? (
+                            {getPageNumbers().map((pageNumber, idx) =>
+                                pageNumber === '...' ? (
                                     <span
                                         key={`ellipsis-${idx}`}
                                         className="text-snow/50 px-2 py-2"
@@ -241,16 +325,20 @@ export const DataTable = ({
                                     </span>
                                 ) : (
                                     <button
-                                        key={page}
+                                        key={pageNumber}
                                         className={cn(
                                             'flex h-6 min-w-6 items-center justify-center rounded-md p-1 text-sm font-medium transition-all duration-200',
-                                            currentPage === page
+                                            page === pageNumber
                                                 ? 'bg-secondary/70 text-snow'
                                                 : 'text-snow/70 hover:bg-snow/10 cursor-pointer'
                                         )}
-                                        onClick={() => setCurrentPage(page)}
+                                        onClick={() =>
+                                            isServerPaginated
+                                                ? onPageChange?.(pageNumber)
+                                                : setClientPage(pageNumber)
+                                        }
                                     >
-                                        {page}
+                                        {pageNumber}
                                     </button>
                                 )
                             )}
@@ -260,12 +348,16 @@ export const DataTable = ({
                         <button
                             className={cn(
                                 'flex items-center transition-all duration-200',
-                                currentPage === totalPages
+                                page === totalPages
                                     ? 'cursor-not-allowed opacity-50'
                                     : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
                             )}
-                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                            disabled={currentPage === totalPages}
+                            onClick={() =>
+                                isServerPaginated
+                                    ? onPageChange?.(Math.min(totalPages, page + 1))
+                                    : setClientPage((p) => Math.min(totalPages, p + 1))
+                            }
+                            disabled={page === totalPages}
                             title="Next page"
                         >
                             <NextPage size={16} />
@@ -276,12 +368,16 @@ export const DataTable = ({
                             <button
                                 className={cn(
                                     'text-snow/70 transition-all duration-200',
-                                    currentPage > totalPages - 10
+                                    page > totalPages - 10
                                         ? 'cursor-not-allowed opacity-50'
                                         : 'hover:text-snow/50 active:text-snow/20 cursor-pointer'
                                 )}
-                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 10))}
-                                disabled={currentPage > totalPages - 10}
+                                onClick={() =>
+                                    isServerPaginated
+                                        ? onPageChange?.(Math.min(totalPages, page + 10))
+                                        : setClientPage((p) => Math.min(totalPages, p + 10))
+                                }
+                                disabled={page > totalPages - 10}
                                 title="Forward 10 pages"
                             >
                                 <JumpForward10 size={16} />
@@ -290,9 +386,8 @@ export const DataTable = ({
 
                         {/* Total info */}
                         <span className="text-snow/60 ml-2 text-sm">
-                            {sortedRows.length > 0 ? startIndex + 1 : 0}-
-                            {Math.min(endIndex, sortedRows.length)} of{' '}
-                            <span className="text-snow font-semibold">{sortedRows.length}</span>
+                            {displayStart}-{displayEnd} of{' '}
+                            <span className="text-snow font-semibold">{totalItems}</span>
                         </span>
                     </div>
                 </div>
