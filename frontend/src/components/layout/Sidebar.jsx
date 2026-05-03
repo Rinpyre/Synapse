@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-    Home,
     MessageCircle as AI,
-    Logs,
     Bolt as Settings,
     DatabaseSearch as Query,
     CircleUser as Account,
@@ -12,9 +10,7 @@ import {
 } from 'lucide-react'
 
 const items = [
-    { label: 'Home', icon: Home, route: '/' },
-    { label: 'Logs', icon: Logs, route: '/logs' },
-    { label: 'Query', icon: Query, route: '/query' },
+    { label: 'Logs', icon: Query, route: '/' },
     { label: 'devider' },
     { label: 'AI', icon: AI, route: '/ai' },
     { label: 'space' },
