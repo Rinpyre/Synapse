@@ -54,10 +54,10 @@ Query Interface and Results Layout,
 Conversation Interface Design,
 Filter Requirements and User Experience]
 
-## Acceptance Criteria
+## Acceptance Criteria (Needs to be a checklist)
 
-- [Observable outcome 1]
-- [Observable outcome 2]
+- [ ] [Observable outcome 1]
+- [ ] [Observable outcome 2]
 
 ## Notes
 
