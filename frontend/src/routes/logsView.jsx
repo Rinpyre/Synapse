@@ -49,7 +49,17 @@ export const LogsViewPage = () => {
                 <h2 className="text-snow flex grow items-center p-4 text-2xl font-bold">
                     AI Logs Analyzer
                 </h2>
-                <div className="border-border bg-secondary flex w-full items-center gap-2 rounded border px-3 py-2">
+
+                <div
+                    className="border-border bg-secondary flex w-full cursor-text items-center gap-2 rounded border px-3 py-2"
+                    onClick={
+                        // Focus the input when clicking the container
+                        () => {
+                            const input = document.getElementById('queryTextarea')
+                            if (input) input.focus()
+                        }
+                    }
+                >
                     <Search className="text-metadata h-5 w-5" />
                     <input
                         type="text"
