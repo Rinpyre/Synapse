@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, RotateCcw } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
@@ -127,8 +127,16 @@ const getMarkdownComponents = (isUser) => {
     }
 }
 
-export const Message = ({ role, content, isLoading = false }) => {
+export const Message = ({
+    role,
+    content,
+    isLoading = false,
+    messageId,
+    onRetry,
+    canRetry = false
+}) => {
     const isUser = role === 'user'
+    const isAssistant = role === 'assistant'
     const [copied, setCopied] = useState(false)
     const timeoutRef = useRef(null)
     const markdownComponents = getMarkdownComponents(isUser)
@@ -157,6 +165,16 @@ export const Message = ({ role, content, isLoading = false }) => {
             setCopied(false)
         }
     }
+
+    const handleRetryMessage = () => {
+        if (!onRetry || !messageId) {
+            return
+        }
+
+        onRetry(messageId)
+    }
+
+    const retryDisabled = isLoading || !canRetry
 
     return (
         <div className={`flex items-end gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -204,6 +222,18 @@ export const Message = ({ role, content, isLoading = false }) => {
                             <Copy className="h-3.5 w-3.5" />
                         )}
                     </button>
+                    {isAssistant && onRetry && (
+                        <button
+                            type="button"
+                            onClick={handleRetryMessage}
+                            className="text-metadata hover:bg-tertiary/60 rounded p-1.5 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                            aria-label="Retry response"
+                            title="Retry response"
+                            disabled={retryDisabled}
+                        >
+                            <RotateCcw className="h-3.5 w-3.5" />
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
