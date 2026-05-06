@@ -6,7 +6,7 @@ export const MessageList = ({ messages, isLoading = false }) => {
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+    }, [messages, isLoading])
 
     return (
         <div className="flex flex-col gap-4 overflow-y-auto pr-4">
