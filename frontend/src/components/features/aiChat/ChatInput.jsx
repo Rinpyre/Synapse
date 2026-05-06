@@ -5,19 +5,27 @@ export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
     const [input, setInput] = useState('')
     const textareaRef = useRef(null)
 
+    const refocusInput = () => {
+        textareaRef.current?.focus()
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault()
-        if (input.trim() && !isDisabled) {
-            onSend(input.trim())
-            setInput('')
-            if (textareaRef.current) {
-                textareaRef.current.style.height = 'auto'
-            }
+        const trimmed = input.trim()
+        if (!trimmed || isDisabled) {
+            return
         }
+
+        onSend(trimmed)
+        setInput('')
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto'
+        }
+        requestAnimationFrame(refocusInput)
     }
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Enter' && !e.shiftKey && !isDisabled) {
             e.preventDefault()
             handleSubmit(e)
         }
@@ -45,7 +53,6 @@ export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    disabled={isDisabled}
                     placeholder="Describe what to analyze"
                     className="border-border bg-secondary text-snow placeholder-metadata focus:border-accent flex-1 resize-none overflow-hidden rounded-lg border px-4 py-1.5 outline-none disabled:opacity-50"
                     rows={1}
