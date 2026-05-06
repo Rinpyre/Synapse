@@ -1,9 +1,19 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, AlertCircle } from 'lucide-react'
+import { ArrowUp as SendIcon, CircleStop as StopIcon, AlertCircle as AlertIcon } from 'lucide-react'
+import { cn } from '@utils'
 
-export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
+export const ChatInput = ({
+    onSend,
+    onStop,
+    isDisabled = false,
+    isGenerating = false,
+    error = null
+}) => {
     const [input, setInput] = useState('')
     const textareaRef = useRef(null)
+
+    const canSend = !isDisabled && input.trim()
+    const showStop = isGenerating
 
     const refocusInput = () => {
         textareaRef.current?.focus()
@@ -31,6 +41,15 @@ export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
         }
     }
 
+    const handleStop = () => {
+        if (!showStop) {
+            return
+        }
+
+        onStop?.()
+        requestAnimationFrame(refocusInput)
+    }
+
     useEffect(() => {
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto'
@@ -43,7 +62,7 @@ export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
         <div className="flex flex-col gap-2">
             {error && (
                 <div className="bg-error/10 text-error flex items-center gap-2 rounded-lg px-3 py-2">
-                    <AlertCircle size={16} />
+                    <AlertIcon size={16} />
                     <span className="text-sm">{error}</span>
                 </div>
             )}
@@ -58,12 +77,19 @@ export const ChatInput = ({ onSend, isDisabled = false, error = null }) => {
                     rows={1}
                 />
                 <button
-                    type="submit"
-                    disabled={isDisabled || !input.trim()}
-                    className="bg-accent hover:bg-accent-light disabled:bg-accent-dark text-primary flex items-center justify-center rounded-lg p-2 transition-colors"
-                    aria-label="Send message"
+                    type={showStop ? 'button' : 'submit'}
+                    onClick={showStop ? handleStop : undefined}
+                    disabled={showStop ? !onStop : !canSend}
+                    className={cn(
+                        'text-primary flex items-center justify-center rounded-lg p-2 transition-colors hover:cursor-pointer disabled:cursor-not-allowed',
+                        showStop
+                            ? 'bg-error hover:bg-error/80 disabled:opacity-60'
+                            : 'bg-accent hover:bg-accent-light disabled:bg-accent-dark'
+                    )}
+                    aria-label={showStop ? 'Stop generating' : 'Send message'}
+                    title={showStop ? 'Stop generating' : 'Send message'}
                 >
-                    <Send size={20} />
+                    {showStop ? <StopIcon size={18} /> : <SendIcon size={20} />}
                 </button>
             </form>
         </div>

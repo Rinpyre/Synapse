@@ -7,6 +7,7 @@ export const AiChat = () => {
         messages: chatMessages,
         sendMessage,
         status,
+        stop,
         error
     } = useChat({
         transport: new DefaultChatTransport({
@@ -47,7 +48,9 @@ export const AiChat = () => {
                 <div className="pt-1">
                     <ChatInput
                         onSend={handleSendMessage}
+                        onStop={stop}
                         isDisabled={status !== 'ready'}
+                        isGenerating={isStreaming}
                         error={errorMessage}
                     />
                 </div>
