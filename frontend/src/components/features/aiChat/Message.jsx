@@ -204,14 +204,26 @@ export const Message = ({
                     </div>
                 </div>
                 <div
-                    className={`mt-2 flex items-center gap-2 ${
+                    className={`mt-2 flex items-center gap-1 ${
                         isUser ? 'justify-end' : 'justify-start'
                     }`}
                 >
+                    {isAssistant && onRetry && (
+                        <button
+                            type="button"
+                            onClick={handleRetryMessage}
+                            className="text-metadata hover:bg-tertiary/60 rounded p-1 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                            aria-label="Retry response"
+                            title="Retry response"
+                            disabled={retryDisabled}
+                        >
+                            <RotateCcw className="h-3.5 w-3.5" />
+                        </button>
+                    )}
                     <button
                         type="button"
                         onClick={handleCopyMessage}
-                        className={`text-metadata hover:bg-tertiary/60 rounded p-1.5 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`}
+                        className={`text-metadata hover:bg-tertiary/60 rounded p-1 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`}
                         aria-label={copied ? 'Copied' : 'Copy message'}
                         title={copied ? 'Copied' : 'Copy message'}
                         disabled={!content || isLoading}
@@ -222,18 +234,6 @@ export const Message = ({
                             <Copy className="h-3.5 w-3.5" />
                         )}
                     </button>
-                    {isAssistant && onRetry && (
-                        <button
-                            type="button"
-                            onClick={handleRetryMessage}
-                            className="text-metadata hover:bg-tertiary/60 rounded p-1.5 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                            aria-label="Retry response"
-                            title="Retry response"
-                            disabled={retryDisabled}
-                        >
-                            <RotateCcw className="h-3.5 w-3.5" />
-                        </button>
-                    )}
                 </div>
             </div>
         </div>
