@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Check, Copy } from 'lucide-react'
 import { copyToClipboard } from '@utils'
 
 export const CodeBlock = ({ code, language, isUser, renderedCode }) => {
@@ -46,10 +47,11 @@ export const CodeBlock = ({ code, language, isUser, renderedCode }) => {
                 <button
                     type="button"
                     onClick={handleCopy}
-                    className={`rounded px-2 py-0.5 transition-colors ${buttonClass}`}
-                    aria-label="Copy code"
+                    className={`inline-flex h-6 w-6 items-center justify-center rounded transition-colors duration-150 ease-out hover:cursor-pointer ${buttonClass}`}
+                    aria-label={copied ? 'Copied' : 'Copy code'}
+                    title={copied ? 'Copied' : 'Copy code'}
                 >
-                    {copied ? 'Copied' : 'Copy'}
+                    {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                 </button>
             </div>
             <pre className={`overflow-x-auto px-3 py-2 text-xs ${panelClass}`}>
