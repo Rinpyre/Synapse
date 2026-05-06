@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MessageList, ChatInput } from '@components'
+import { MessageList, ChatInput } from '@components/features/aiChat'
 
 export const AiChat = () => {
     const [messages, setMessages] = useState([])

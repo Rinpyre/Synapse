@@ -22,9 +22,7 @@ export const MessageList = ({ messages, isLoading = false }) => {
                     {messages.map((msg, idx) => (
                         <Message key={idx} role={msg.role} content={msg.content} />
                     ))}
-                    {isLoading && (
-                        <Message role="ai" content="Thinking..." isLoading={true} />
-                    )}
+                    {isLoading && <Message role="ai" content="Thinking..." isLoading={true} />}
                 </>
             )}
             <div ref={endRef} />
