@@ -9,7 +9,7 @@ export const MessageList = ({ messages, isLoading = false }) => {
     }, [messages, isLoading])
 
     return (
-        <div className="flex flex-col gap-4 overflow-y-auto pr-4">
+        <div className="scroll-none flex h-full min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-4">
             {messages.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">
                     <div className="text-metadata">
