@@ -5,6 +5,16 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon index.js",
     "run": "node index.js"
+  },
+  "dependencies": {
+    "ai": "^6.0.175",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "ollama-ai-provider-v2": "^3.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
