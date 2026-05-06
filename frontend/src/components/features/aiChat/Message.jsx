@@ -11,7 +11,7 @@ export const Message = ({ role, content, isLoading = false }) => {
                 {isUser ? 'U' : 'AI'}
             </div>
             <div
-                className={`max-w-2xl rounded-lg px-4 py-2 ${
+                className={`max-w-xs rounded-lg px-4 py-2 ${
                     isUser
                         ? 'bg-accent text-primary rounded-br-none'
                         : 'bg-tertiary text-snow rounded-bl-none'
