@@ -73,7 +73,7 @@ export const ChatInput = ({
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Describe what to analyze"
-                    className="border-border bg-secondary text-snow placeholder-metadata focus:border-accent flex-1 resize-none overflow-hidden rounded-lg border px-4 py-1.5 outline-none disabled:opacity-50"
+                    className="border-border bg-secondary text-snow placeholder-metadata focus:border-accent scroll-none flex-1 resize-none overflow-y-auto rounded-lg border px-4 py-1.5 outline-none disabled:opacity-50"
                     rows={1}
                 />
                 <button
