@@ -133,7 +133,7 @@ export const AiChat = () => {
                             const textToCopy = messages
                                 .map(
                                     (msg) =>
-                                        `${msg.role === 'user' ? 'User' : 'Synapse AI'}: ${msg.content}`
+                                        `${msg.role === 'user' ? 'User' : 'Synapse AI'}:\n"${msg.content}"`
                                 )
                                 .join('\n\n')
                             handleCopyMessage(textToCopy)
