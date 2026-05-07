@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { MessageList, ChatInput } from '@components/features/aiChat'
+import { SquarePen as NewChatIcon, Clipboard as CopyChatIcon, Check } from 'lucide-react'
+import { copyToClipboard } from '@utils'
 
 export const AiChat = () => {
     const {
@@ -20,6 +22,8 @@ export const AiChat = () => {
     })
 
     const pendingRetryIdRef = useRef(null)
+    const [copied, setCopied] = useState(false)
+    const timeoutRef = useRef(null)
 
     const getMessageText = (message) => {
         const text = message?.parts?.map((part) => (part.type === 'text' ? part.text : '')).join('')
@@ -93,11 +97,66 @@ export const AiChat = () => {
         pendingRetryIdRef.current = null
     }, [chatMessages, regenerate, reload])
 
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
+        }
+    }, [])
+
+    const handleCopyMessage = async (content) => {
+        if (!content) {
+            return
+        }
+
+        try {
+            await copyToClipboard(content)
+            setCopied(true)
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
+            timeoutRef.current = setTimeout(() => setCopied(false), 1500)
+        } catch {
+            setCopied(false)
+        }
+    }
+
     return (
         <div className="ai-page bg-secondary border-border flex h-full min-h-0 w-full flex-col items-center gap-2 border-l p-4">
-            <h2 className="text-snow border-border flex w-[80%] justify-center border-b pb-2 text-xl font-bold">
-                Simon - AI Analytics Assistant
-            </h2>
+            <div className="flex w-full justify-between pb-2">
+                <h2 className="text-snow text-xl font-bold">Simon</h2>
+                <div className="actions flex gap-1">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const textToCopy = messages
+                                .map(
+                                    (msg) =>
+                                        `${msg.role === 'user' ? 'User' : 'Synapse AI'}: ${msg.content}`
+                                )
+                                .join('\n\n')
+                            handleCopyMessage(textToCopy)
+                        }}
+                        title="Copy chat to clipboard"
+                        className="action-btn text-metadata hover:bg-tertiary/60 cursor-pointer rounded-md p-1.5 transition-colors"
+                    >
+                        {copied ? (
+                            <Check size={18} className="text-green-500" />
+                        ) : (
+                            <CopyChatIcon size={18} />
+                        )}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setMessages([])}
+                        title="New chat"
+                        className="action-btn text-metadata hover:bg-tertiary/60 cursor-pointer rounded-md p-1.5 transition-colors"
+                    >
+                        <NewChatIcon size={18} />
+                    </button>
+                </div>
+            </div>
             <div className="flex min-h-0 w-full flex-1 flex-col">
                 <div className="flex min-h-0 flex-1 flex-col">
                     <MessageList
