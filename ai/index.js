@@ -1,16 +1,21 @@
 import express from 'express'
 import cors from 'cors'
 import { convertToModelMessages, streamText } from 'ai'
-import { ollama } from 'ollama-ai-provider-v2'
+import { createOllama } from 'ollama-ai-provider-v2'
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
+import dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+loadEnvironment(__dirname)
+
 const promptPath = path.join(__dirname, 'system-prompt.md')
 const cachedPrompt = fs.readFileSync(promptPath, 'utf-8')
 const devMode = process.env.NODE_ENV !== 'production'
-const model = ollama('qwen3.5:latest')
+const model = createModel()
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -51,10 +56,10 @@ app.post('/api/chat', async (req, res) => {
     const systemOverride = typeof system === 'string' && system.trim() ? system.trim() : null
     const finalSystem = systemOverride || getSystemPrompt()
 
-    // Pass it to Vercel's streamText function, pointing it to Ollama
+    // Pass it to Vercel's streamText function, pointing it to the configured provider.
     const result = streamText({
-        //? Model name/id as defined in `ollama list`
-        model: model,
+        //? Model name/id as defined by the active provider.
+        model,
         messages: await convertToModelMessages(safeMessages),
         system: finalSystem,
         allowSystemInMessages: false
@@ -98,7 +103,7 @@ app.post('/api/chat/dev', async (req, res) => {
     const finalSystem = systemOverride || getSystemPrompt()
 
     const result = streamText({
-        model: model,
+        model,
         messages: await convertToModelMessages(safeUiMessages),
         system: finalSystem,
         allowSystemInMessages: false
@@ -108,3 +113,107 @@ app.post('/api/chat/dev', async (req, res) => {
 })
 
 app.listen(8001)
+
+function loadEnvironment(baseDir) {
+    const envFiles = listEnvFiles(baseDir)
+    if (envFiles.length === 0) {
+        console.warn('No .env file found in the ai folder. Using existing environment variables.')
+        return null
+    }
+
+    const selected = selectEnvFile(envFiles)
+    dotenv.config({ path: selected })
+    console.log(`Loaded environment from ${path.basename(selected)}`)
+    return selected
+}
+
+function listEnvFiles(baseDir) {
+    return fs
+        .readdirSync(baseDir, { withFileTypes: true })
+        .filter((entry) => entry.isFile() && entry.name.startsWith('.env'))
+        .map((entry) => path.join(baseDir, entry.name))
+}
+
+function selectEnvFile(envFiles) {
+    if (envFiles.length === 1) {
+        return envFiles[0]
+    }
+
+    const envName = process.env.NODE_ENV?.trim()
+    const precedence = []
+
+    if (envName) {
+        precedence.push(`.env.${envName}.local`, `.env.${envName}`)
+    }
+
+    precedence.push('.env.local', '.env')
+
+    const envMap = new Map(envFiles.map((filePath) => [path.basename(filePath), filePath]))
+    for (const candidate of precedence) {
+        const match = envMap.get(candidate)
+        if (match) {
+            return match
+        }
+    }
+
+    const sorted = [...envFiles].sort((left, right) =>
+        path.basename(left).localeCompare(path.basename(right))
+    )
+
+    return sorted[0]
+}
+
+function createModelFromEnv() {
+    const providerName = normalizeProviderName(requireEnv('PROVIDER'))
+    const baseUrl = requireEnv('BASE_URL')
+    const modelId = requireEnv('MODEL')
+
+    if (providerName === 'ollama') {
+        const provider = createOllama({ baseURL: baseUrl })
+        return provider(modelId)
+    }
+
+    if (providerName === 'lmstudio') {
+        const apiKey = requireEnv('LMSTUDIO_API_KEY')
+        const provider = createOpenAICompatible({
+            name: 'lmstudio',
+            baseURL: baseUrl,
+            headers: {
+                Authorization: `Bearer ${apiKey}`
+            }
+        })
+        return provider(modelId)
+    }
+
+    throw new Error(`Unsupported PROVIDER: ${providerName}`)
+}
+
+function createModel() {
+    try {
+        return createModelFromEnv()
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        console.error(`AI configuration error: ${message}`)
+        process.exit(1)
+    }
+}
+
+function normalizeProviderName(value) {
+    const normalized = value.trim().toLowerCase()
+    if (normalized === 'ollama') {
+        return 'ollama'
+    }
+    if (normalized === 'lmstudio' || normalized === 'lm-studio') {
+        return 'lmstudio'
+    }
+    throw new Error(`Unsupported PROVIDER: ${value}`)
+}
+
+function requireEnv(name) {
+    const rawValue = process.env[name]
+    const value = typeof rawValue === 'string' ? rawValue.trim() : ''
+    if (!value) {
+        throw new Error(`Missing required env var: ${name}`)
+    }
+    return value
+}

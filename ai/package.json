@@ -9,8 +9,10 @@
     "start": "cross-env NODE_ENV=production node index.js"
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.46",
     "ai": "^6.0.175",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "ollama-ai-provider-v2": "^3.5.0"
   },
