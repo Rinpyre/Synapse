@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { MessageList, ChatInput } from '@components/features/aiChat'
@@ -25,19 +25,21 @@ export const AiChat = () => {
     const [copied, setCopied] = useState(false)
     const timeoutRef = useRef(null)
 
-    const getMessageText = (message) => {
+    const getMessageText = useCallback((message) => {
         const text = message?.parts?.map((part) => (part.type === 'text' ? part.text : '')).join('')
 
         return text || message?.content || ''
-    }
+    }, [])
 
-    const messages = chatMessages
-        .filter((message) => message.role !== 'system')
-        .map((message) => ({
-            id: message.id,
-            role: message.role,
-            content: getMessageText(message)
-        }))
+    const messages = useMemo(() => {
+        return chatMessages
+            .filter((message) => message.role !== 'system')
+            .map((message) => ({
+                id: message.id,
+                role: message.role,
+                content: getMessageText(message)
+            }))
+    }, [chatMessages, getMessageText])
 
     const isStreaming = status === 'streaming' || status === 'submitted'
     const showThinking =
@@ -47,35 +49,48 @@ export const AiChat = () => {
     const canRetry = Boolean(
         setMessages && (typeof regenerate === 'function' || typeof reload === 'function')
     )
+    const chatMessagesRef = useRef(chatMessages)
+    const isStreamingRef = useRef(isStreaming)
+    const canRetryRef = useRef(canRetry)
+
+    useEffect(() => {
+        chatMessagesRef.current = chatMessages
+        isStreamingRef.current = isStreaming
+        canRetryRef.current = canRetry
+    }, [chatMessages, isStreaming, canRetry])
 
     const handleSendMessage = (content) => {
         sendMessage({ text: content })
     }
 
-    const handleRetryMessage = (messageId) => {
-        if (!canRetry) {
-            return
-        }
+    const handleRetryMessage = useCallback(
+        (messageId) => {
+            if (!canRetryRef.current) {
+                return
+            }
 
-        const targetIndex = chatMessages.findIndex((message) => message.id === messageId)
-        if (targetIndex === -1) {
-            return
-        }
+            const currentMessages = chatMessagesRef.current
+            const targetIndex = currentMessages.findIndex((message) => message.id === messageId)
+            if (targetIndex === -1) {
+                return
+            }
 
-        const targetMessage = chatMessages[targetIndex]
-        if (targetMessage?.role !== 'assistant') {
-            return
-        }
+            const targetMessage = currentMessages[targetIndex]
+            if (targetMessage?.role !== 'assistant') {
+                return
+            }
 
-        const truncatedMessages = chatMessages.slice(0, targetIndex + 1)
+            const truncatedMessages = currentMessages.slice(0, targetIndex + 1)
 
-        if (isStreaming) {
-            stop?.()
-        }
+            if (isStreamingRef.current) {
+                stop?.()
+            }
 
-        setMessages(truncatedMessages)
-        pendingRetryIdRef.current = targetMessage.id
-    }
+            setMessages(truncatedMessages)
+            pendingRetryIdRef.current = targetMessage.id
+        },
+        [setMessages, stop]
+    )
 
     useEffect(() => {
         const pendingRetryId = pendingRetryIdRef.current
