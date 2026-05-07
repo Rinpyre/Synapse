@@ -35,6 +35,10 @@ export const getSystemPrompt = () => {
 const sanitizeMessages = (messages) => messages.filter((message) => message?.role !== 'system')
 
 app.post('/api/chat', async (req, res) => {
+    console.log(
+        `Received chat request for model: [${model.provider}/${model.modelId}] with ${req.body.messages?.length || 0} messages.`
+    )
+
     // Get the messages array sent from the React frontend
     const { messages, system } = req.body
     const rawMessages = Array.isArray(messages) ? messages : []
@@ -61,6 +65,10 @@ app.post('/api/chat', async (req, res) => {
 })
 
 app.post('/api/chat/dev', async (req, res) => {
+    console.log(
+        `Received DEV chat request for model: [${model.provider}/${model.modelId}] with ${req.body.messages?.length || 0} messages.`
+    )
+
     const { messages, prompt, system } = req.body
 
     const uiMessages = Array.isArray(messages)
