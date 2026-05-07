@@ -123,7 +123,16 @@ const getMarkdownComponents = (isUser) => {
         ol: ({ children }) => <ol className={`list-decimal ${listClass}`}>{children}</ol>,
         li: ({ children }) => <li className="leading-relaxed">{children}</li>,
         p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-        hr: () => <hr className={`my-4 border ${borderClass}`} />
+        hr: () => <hr className={`my-4 border ${borderClass}`} />,
+        blockquote: ({ children }) => (
+            <blockquote
+                className={`border-accent border-l-2 p-1 pl-2.5 opacity-90 ${
+                    isUser ? 'bg-accent/10' : 'bg-secondary/40'
+                }`}
+            >
+                {children}
+            </blockquote>
+        )
     }
 }
 
