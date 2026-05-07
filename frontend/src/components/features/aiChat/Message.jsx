@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { Check, Copy, RotateCcw } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -136,14 +136,14 @@ const getMarkdownComponents = (isUser) => {
     }
 }
 
-export const Message = ({
+export const Message = memo(function Message({
     role,
     content,
     isLoading = false,
     messageId,
     onRetry,
     canRetry = false
-}) => {
+}) {
     const isUser = role === 'user'
     const isAssistant = role === 'assistant'
     const [copied, setCopied] = useState(false)
@@ -247,4 +247,4 @@ export const Message = ({
             </div>
         </div>
     )
-}
+})
