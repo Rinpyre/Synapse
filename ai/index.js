@@ -266,7 +266,7 @@ function createTools() {
         filters: z
             .string()
             .describe(
-                'FORMAT: "key:value" separated by spaces. 1. Use underscores for spaces (school:harvard_south). 2. Wildcards (*) allowed for Direct/Relational tags (id:30*, teacher:*), but NOT for Special tags (date, time, type, entity). 3. Use Relational tags (student, teacher, etc.) to find owners. 4. category: searches log metadata text. 5. Words without colons are free-text.'
+                'FORMAT: "key:value" separated by spaces. NO DUPLICATE KEYS in one query. To search multiple distinct IDs or entities, make multiple separate tool calls. 1. Use underscores for spaces (school:harvard_south). 2. Wildcards (*) allowed for Direct/Relational tags (id:30*, teacher:*), but NOT for Special tags (date, time, type, entity). 3. Use Relational tags (student, teacher, etc.) to find owners. 4. category: searches log metadata text. 5. Words without colons are free-text.'
             ),
         page: z
             .number()
