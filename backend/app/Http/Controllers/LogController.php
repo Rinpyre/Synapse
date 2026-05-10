@@ -51,11 +51,11 @@ class LogController extends Controller
             ],
             'booking' => [
                 'type_id' => 973,
-                'columns' => ['Name']
+                'columns' => ['Title']
             ],
             'room' => [
                 'type_id' => 3,
-                'columns' => ['Name']
+                'columns' => ['Room']
             ],
             'equipment' => [
                 'type_id' => 4,
