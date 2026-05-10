@@ -260,6 +260,26 @@ function requireEnv(name) {
     return value
 }
 
+// TODO: Remake the tool definition to insteaf of having the input of "filters", to have each filter tag as an individual input parameter. This way the agent can choose which filters to use and fill them in a more structured way instead of having to construct the "filters" string with the correct format.
+// For example, instead of having an input like this:
+/*
+{
+    "filters": "teacher:Albæk level:4",
+    "page": 1,
+    "perPage": 20
+}
+*/
+// We would have an input like this:
+/*
+ {
+     "teacher": "Albæk",
+     "level": "4",
+     "page": 1,
+     "perPage": 20
+ }
+ */
+//* Then in the tool execution, we would construct the "filters" string based on which filter parameters are provided. This would make it easier for the agent to use the tool and reduce the chances of formatting errors in the filters string.
+
 function createTools() {
     const queryLogsDescription = 'Query logs from the backend with filters and pagination.'
     const queryLogsSchema = z.object({

@@ -22,6 +22,12 @@ export async function queryLogs(filters, page = 1, perPage = 20) {
         )
     }
 
+    // TODO: Return the logs in a structured format for the agent to easily consume, including pagination info if needed. The reason being to avoid filling the context window with json duplicated metadata like "total", "per_page", etc. that the agent doesn't need to see.
+    /* //? This will return logs in the format of CSV. First row with the columns then the logs:
+     * LogID|Teacher/Staff|Subjects/Tags|Category|Time|Message|Level
+     * 35513|Niklas SpeedAdmin ApS|Niklas SpeedAdmin ApS|LoginSystem|2026-01-27 13:45:39|Niklas... logged in (10.200.36.50)|2
+     * 35517|Niklas SpeedAdmin ApS|Dominik Szoboszlai, Bobby Olsen|StudentProfilePage|2026-01-27 12:47:05|Student shown|2
+     */
     const data = await response.json()
     return data
 }
