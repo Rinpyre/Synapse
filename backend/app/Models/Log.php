@@ -19,8 +19,15 @@ class Log extends Model
         'SessionId',
         'Level'
     ];
-   
-    public function entities()
+
+    // Modern Link
+    public function mainEntity()
+    {
+        return $this->belongsTo(MainEntity::class, 'MainEntityId');
+    }
+
+    // Legacy Link
+    public function logEntities()
     {
         return $this->hasMany(LogEntity::class, 'LogId');
     }
