@@ -46,9 +46,12 @@ CRITICAL RULES:
    - Valid: `id:30*`, `teacher:*`, `school:harv*`
    - INVALID: `date:2026-*`, `time:14:*` (Special tags do not support wildcards).
 3. TAG CLASSIFICATION:
-   - DIRECT TAGS (Supports Wildcards): `id`, `level`, `category`.
+   - DIRECT TAGS (Supports Wildcards): `id<int>`, `level<int|1-5>`, `category<string>`.
      _Note: `category:` searches the log's metadata text, NOT the person/entity it belongs to._
    - RELATIONAL TAGS (Supports Wildcards): `student`, `school`, `teacher`, `booking`, `room`, `equipment`, `parent`.
      _Use these to find logs owned by or related to specific entities._
-   - SPECIAL TAGS (NO Wildcards): `time`, `date`, `type`, `entity`.
-4. FREE TEXT: Any word without a colon (:) is a global text search across log messages.
+   - SPECIAL TAGS (NO Wildcards): `time<string|hh:mm(:ss)>`, `date<string|dd-mm-yyyy>`, `type<int>`, `entity<int>`.
+4. FREE TEXT: Any word without a colon (:) is gonna search inside the log's metadata, specifically in the "message" field. This is for general keyword searching and does not have to follow the key:value format. However, it will do string matching, so the free text must be contained in the message of the log to return results.
+5. TAG DUPLICATION & LOGIC: All tags in a single string are combined using "AND" logic. You CANNOT use the same tag key twice in one query (e.g., `id:1 id:2` or `teacher:john teacher:mary` will fail).
+6. MULTIPLE INQUIRIES: If the user asks to look up multiple distinct IDs or different entities at the same time, you MUST execute the `queryLogs` tool multiple times, once for each item.
+7. If user asks a relatively vague question, then you may try to fetch logs, check their structure and contents and make subsequent queries based on the patterns you see in the logs. But you must not make assumptions or guesses that are not supported by the logs. Always be explicit about what information you are retrieving and how it relates to the user's question.
