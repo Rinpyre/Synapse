@@ -19,4 +19,9 @@ class Log extends Model
         'SessionId',
         'Level'
     ];
+   
+    public function entities()
+    {
+        return $this->hasMany(LogEntity::class, 'LogId');
+    }
 }

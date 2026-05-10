@@ -15,4 +15,9 @@ class LogEntity extends Model
         'EntityType',
         'EntityId'
     ];
+
+    public function log()
+    {
+        return $this->belongsTo(Log::class, 'LogId');
+    }
 }
