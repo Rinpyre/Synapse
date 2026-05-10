@@ -18,5 +18,6 @@
     {
       "file": ".github\\instructions\\pr-instructions.md"
     }
-  ]
+  ],
+  "todo-tree.tree.scanMode": "workspace only"
 }
