@@ -24,6 +24,20 @@ The following rules are non-negotiable and must be strictly followed in every re
 When using the `queryLogs` tool, you must construct a single `filters` string.
 Format: "key:value" pairs separated by spaces.
 
+Types:
+
+- 1 = Student
+- 2 = Teacher
+- 3 = Room
+- 4 = Equipment
+- 10 = Parent
+- 13 = School
+- 14 = User (Admin/Employee) | NOT CURRENTLY USED
+- 972 = Course | NOT CURRENTLY USED
+- 973 = Booking
+- 975 = Base Course | NOT CURRENTLY USED
+- 978 = Booking (Legacy) | NOT CURRENTLY USED
+
 CRITICAL RULES:
 
 1. MULTI-WORD VALUES: No spaces inside values. Replace spaces with underscores (\_).
