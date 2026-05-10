@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import { randomUUID } from 'crypto'
 import { z } from 'zod'
 import { convertToModelMessages, stepCountIs, streamText, tool } from 'ai'
 import { createOllama } from 'ollama-ai-provider-v2'
@@ -21,21 +22,9 @@ const model = createModel()
 const app = express()
 app.use(cors())
 app.use(express.json())
-const tools = createTools()
+const { tools, toolMetadata } = createTools()
 const stopWhen = stepCountIs(5)
-
-const logToolActivity = ({ toolCalls, toolResults }) => {
-    if (!devMode) {
-        return
-    }
-
-    if (!toolCalls?.length && !toolResults?.length) {
-        return
-    }
-
-    console.log('Tool calls:', JSON.stringify(toolCalls))
-    console.log('Tool results:', JSON.stringify(toolResults))
-}
+const logAiRequests = devMode || process.env.AI_LOG_LEVEL === 'debug'
 
 if (!devMode) {
     console.log('AI Service running in production mode.')
@@ -57,6 +46,8 @@ export const getSystemPrompt = () => {
 const sanitizeMessages = (messages) => messages.filter((message) => message?.role !== 'system')
 
 app.post('/api/chat', async (req, res) => {
+    const requestId = randomUUID()
+    res.setHeader('x-request-id', requestId)
     console.log(
         `Received chat request for model: [${model.provider}/${model.modelId}] with ${req.body.messages?.length || 0} messages.`
     )
@@ -72,6 +63,18 @@ app.post('/api/chat', async (req, res) => {
     const safeMessages = sanitizeMessages(rawMessages)
     const systemOverride = typeof system === 'string' && system.trim() ? system.trim() : null
     const finalSystem = systemOverride || getSystemPrompt()
+    const contextWindow = logAiRequests ? await resolveModelContextWindow() : null
+    const requestLogger = logAiRequests
+        ? createRequestLogger({
+              requestId,
+              route: '/api/chat',
+              model,
+              system: finalSystem,
+              messages: safeMessages,
+              toolMetadata,
+              contextWindow
+          })
+        : null
 
     // Pass it to Vercel's streamText function, pointing it to the configured provider.
     const result = streamText({
@@ -82,7 +85,8 @@ app.post('/api/chat', async (req, res) => {
         system: finalSystem,
         allowSystemInMessages: false,
         stopWhen,
-        onStepFinish: logToolActivity
+        onStepFinish: requestLogger?.onStepFinish,
+        onFinish: requestLogger?.onFinish
     })
 
     // Vercel pipes the streaming response directly back to React
@@ -90,6 +94,8 @@ app.post('/api/chat', async (req, res) => {
 })
 
 app.post('/api/chat/dev', async (req, res) => {
+    const requestId = randomUUID()
+    res.setHeader('x-request-id', requestId)
     console.log(
         `Received DEV chat request for model: [${model.provider}/${model.modelId}] with ${req.body.messages?.length || 0} messages.`
     )
@@ -121,6 +127,18 @@ app.post('/api/chat/dev', async (req, res) => {
 
     const systemOverride = typeof system === 'string' && system.trim() ? system.trim() : null
     const finalSystem = systemOverride || getSystemPrompt()
+    const contextWindow = logAiRequests ? await resolveModelContextWindow() : null
+    const requestLogger = logAiRequests
+        ? createRequestLogger({
+              requestId,
+              route: '/api/chat/dev',
+              model,
+              system: finalSystem,
+              messages: safeUiMessages,
+              toolMetadata,
+              contextWindow
+          })
+        : null
 
     const result = streamText({
         model,
@@ -129,7 +147,8 @@ app.post('/api/chat/dev', async (req, res) => {
         system: finalSystem,
         allowSystemInMessages: false,
         stopWhen,
-        onStepFinish: logToolActivity
+        onStepFinish: requestLogger?.onStepFinish,
+        onFinish: requestLogger?.onFinish
     })
 
     result.pipeTextStreamToResponse(res)
@@ -242,39 +261,296 @@ function requireEnv(name) {
 }
 
 function createTools() {
+    const queryLogsDescription = 'Query logs from the backend with filters and pagination.'
+    const queryLogsSchema = z.object({
+        filters: z
+            .string()
+            .describe(
+                'FORMAT: "key:value" separated by spaces. 1. Use underscores for spaces (school:harvard_south). 2. Wildcards (*) allowed for Direct/Relational tags (id:30*, teacher:*), but NOT for Special tags (date, time, type, entity). 3. Use Relational tags (student, teacher, etc.) to find owners. 4. category: searches log metadata text. 5. Words without colons are free-text.'
+            ),
+        page: z
+            .number()
+            .int()
+            .positive()
+            .default(1)
+            .describe('Page number for pagination (default: 1).'),
+        perPage: z
+            .number()
+            .int()
+            .positive()
+            .max(100)
+            .default(20)
+            .describe('Number of logs per page (default: 20, max: 100).')
+    })
+
     return {
-        queryLogs: tool({
-            name: 'queryLogs',
-            description: 'Query logs from the backend with filters and pagination.',
-            inputSchema: z.object({
-                filters: z
-                    .string()
-                    .describe(
-                        'FORMAT: "key:value" separated by spaces. 1. Use underscores for spaces (school:harvard_south). 2. Wildcards (*) allowed for Direct/Relational tags (id:30*, teacher:*), but NOT for Special tags (date, time, type, entity). 3. Use Relational tags (student, teacher, etc.) to find owners. 4. category: searches log metadata text. 5. Words without colons are free-text.'
-                    ),
-                page: z
-                    .number()
-                    .int()
-                    .positive()
-                    .default(1)
-                    .describe('Page number for pagination (default: 1).'),
-                perPage: z
-                    .number()
-                    .int()
-                    .positive()
-                    .max(100)
-                    .default(20)
-                    .describe('Number of logs per page (default: 20, max: 100).')
-            }),
-            execute: async ({ filters, page, perPage }) => {
-                try {
-                    const data = await queryLogs(filters, page, perPage)
-                    return { success: true, data }
-                } catch (error) {
-                    const message = error instanceof Error ? error.message : String(error)
-                    return { success: false, error: message }
+        tools: {
+            queryLogs: tool({
+                name: 'queryLogs',
+                description: queryLogsDescription,
+                inputSchema: queryLogsSchema,
+                execute: async ({ filters, page, perPage }) => {
+                    try {
+                        const data = await queryLogs(filters, page, perPage)
+                        return { success: true, data }
+                    } catch (error) {
+                        const message = error instanceof Error ? error.message : String(error)
+                        return { success: false, error: message }
+                    }
                 }
+            })
+        },
+        toolMetadata: {
+            queryLogs: {
+                description: queryLogsDescription,
+                inputKeys: Object.keys(queryLogsSchema.shape)
             }
-        })
+        }
     }
+}
+
+let modelContextWindowPromise = null
+
+function createRequestLogger({
+    requestId,
+    route,
+    model,
+    system,
+    messages,
+    toolMetadata,
+    contextWindow
+}) {
+    const systemChars = typeof system === 'string' ? system.length : 0
+    const messageTextChars = messages.reduce(
+        (total, message) => total + getMessageTextForLog(message).length,
+        0
+    )
+    const toolSummary = Object.entries(toolMetadata ?? {}).map(([name, meta]) => ({
+        name,
+        descriptionChars: meta.description?.length ?? 0,
+        inputKeys: meta.inputKeys ?? []
+    }))
+    const toolDescriptionChars = toolSummary.reduce(
+        (total, toolEntry) => total + toolEntry.descriptionChars,
+        0
+    )
+    const estimatedPromptTokens = estimateTokenCount(
+        systemChars + messageTextChars + toolDescriptionChars
+    )
+    const log = {
+        requestId,
+        route,
+        startedAt: new Date().toISOString(),
+        model: {
+            provider: model.provider,
+            id: model.modelId
+        },
+        contextWindow: {
+            tokens: contextWindow?.tokens ?? null,
+            source: contextWindow?.source ?? 'unknown'
+        },
+        system: {
+            chars: systemChars
+        },
+        messages: {
+            count: messages.length,
+            textChars: messageTextChars
+        },
+        tools: toolSummary,
+        estimates: {
+            promptTokens: estimatedPromptTokens
+        },
+        steps: []
+    }
+
+    return {
+        onStepFinish: (step) => recordStep(log, step),
+        onFinish: (summary) => finalizeRequestLog(log, summary)
+    }
+}
+
+function recordStep(log, { toolCalls, toolResults, finishReason, usage }) {
+    log.steps.push({
+        index: log.steps.length + 1,
+        finishReason,
+        usage: usage ?? null,
+        toolCalls: serializeToolCalls(toolCalls),
+        toolResults: serializeToolResults(toolResults)
+    })
+}
+
+function finalizeRequestLog(log, { text, finishReason, usage, toolCalls, toolResults }) {
+    log.finishedAt = new Date().toISOString()
+    log.finish = {
+        finishReason,
+        usage: usage ?? null,
+        responseChars: typeof text === 'string' ? text.length : 0
+    }
+    if (toolCalls?.length || toolResults?.length) {
+        log.finish.toolCalls = serializeToolCalls(toolCalls)
+        log.finish.toolResults = serializeToolResults(toolResults)
+    }
+
+    console.log(`[AI][${log.requestId}] Request summary:\n${JSON.stringify(log, null, 2)}`)
+}
+
+function serializeToolCalls(toolCalls) {
+    if (!Array.isArray(toolCalls) || toolCalls.length === 0) {
+        return []
+    }
+
+    return toolCalls.map((call) => ({
+        toolName: call?.toolName ?? call?.name ?? null,
+        toolCallId: call?.toolCallId ?? call?.id ?? null,
+        args:
+            call?.input ??
+            call?.args ??
+            call?.arguments ??
+            call?.parameters ??
+            call?.params ??
+            call?.function?.arguments ??
+            null
+    }))
+}
+
+function serializeToolResults(toolResults) {
+    if (!Array.isArray(toolResults) || toolResults.length === 0) {
+        return []
+    }
+
+    return toolResults.map((result) => ({
+        toolName: result?.toolName ?? result?.name ?? null,
+        toolCallId: result?.toolCallId ?? result?.id ?? null,
+        input: result?.input ?? null,
+        output: result?.output ?? result?.result ?? null
+    }))
+}
+
+function getMessageTextForLog(message) {
+    if (!message) {
+        return ''
+    }
+
+    if (typeof message.content === 'string') {
+        return message.content
+    }
+
+    const parts = Array.isArray(message.parts) ? message.parts : []
+    return parts.map((part) => (part?.type === 'text' ? (part.text ?? '') : '')).join('')
+}
+
+function estimateTokenCount(charCount) {
+    if (!Number.isFinite(charCount) || charCount <= 0) {
+        return 0
+    }
+
+    return Math.ceil(charCount / 4)
+}
+
+async function resolveModelContextWindow() {
+    if (modelContextWindowPromise) {
+        return modelContextWindowPromise
+    }
+
+    modelContextWindowPromise = fetchModelContextWindow().catch((error) => {
+        const message = error instanceof Error ? error.message : String(error)
+        console.warn(`Failed to resolve model context window: ${message}`)
+        return null
+    })
+
+    return modelContextWindowPromise
+}
+
+async function fetchModelContextWindow() {
+    const providerName = normalizeProviderName(requireEnv('PROVIDER'))
+    const baseUrl = requireEnv('BASE_URL')
+    const modelId = requireEnv('MODEL')
+
+    if (providerName === 'ollama') {
+        const tokens = await fetchOllamaContextWindow(baseUrl, modelId)
+        return {
+            tokens,
+            source: 'ollama'
+        }
+    }
+
+    return {
+        tokens: null,
+        source: providerName
+    }
+}
+
+async function fetchOllamaContextWindow(baseUrl, modelId) {
+    const url = buildProviderUrl(baseUrl, 'show')
+    if (!url) {
+        return null
+    }
+
+    const response = await fetch(url.toString(), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: modelId })
+    })
+
+    if (!response.ok) {
+        return null
+    }
+
+    const payload = await response.json()
+    const parameters = typeof payload?.parameters === 'string' ? payload.parameters : ''
+    const parsedParams = parseOllamaParameters(parameters)
+    const numCtx = Number(parsedParams.num_ctx)
+    if (Number.isFinite(numCtx)) {
+        return numCtx
+    }
+
+    return getContextFromModelInfo(payload?.model_info)
+}
+
+function buildProviderUrl(baseUrl, pathSegment) {
+    try {
+        const url = new URL(baseUrl)
+        const basePath = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname
+        const nextPath = pathSegment.startsWith('/') ? pathSegment.slice(1) : pathSegment
+        url.pathname = `${basePath}/${nextPath}`
+        return url
+    } catch {
+        return null
+    }
+}
+
+function parseOllamaParameters(parametersText) {
+    if (typeof parametersText !== 'string') {
+        return {}
+    }
+
+    return parametersText
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .reduce((acc, line) => {
+            const [key, value] = line.split(/\s+/)
+            if (key && value) {
+                acc[key] = value
+            }
+            return acc
+        }, {})
+}
+
+function getContextFromModelInfo(modelInfo) {
+    if (!modelInfo || typeof modelInfo !== 'object') {
+        return null
+    }
+
+    const keys = ['llama.context_length', 'context_length', 'num_ctx']
+    for (const key of keys) {
+        const value = Number(modelInfo[key])
+        if (Number.isFinite(value)) {
+            return value
+        }
+    }
+
+    return null
 }
