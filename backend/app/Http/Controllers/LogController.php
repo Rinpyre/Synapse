@@ -89,8 +89,11 @@ class LogController extends Controller
                     if (in_array(strtolower($key), $allowedFilters)) {
                         $filters[strtolower($key)] = $value;
                     } else {
-                        // If the key is not in allowed filters, treat it as free text
-                        $freeText[] = $part;
+                        // If the key is not in allowed filters, return and error response with the allowed filter keys
+                        return response()->json([
+                            'error' => 'Invalid filter key: ' . $key,
+                            'allowed_filters' => $allowedFilters
+                        ], 400);
                     }
                 } else {
                     $freeText[] = $part;
@@ -236,8 +239,13 @@ class LogController extends Controller
                                 $morphQuery->where(function ($nameQuery) use ($searchData) {
                                     // Dynamically loop through FirstName, LastName, etc.
                                     foreach ($searchData['columns'] as $index => $column) {
-                                        if ($index === 0) {
-                                            $nameQuery->where($column, 'LIKE', '%' . $searchData['value'] . '%');
+                                        // If the value contains a wildcard *, convert it to a LIKE query
+                                        // If it contains ONLY a wildcard (teacher:*) then we want to match any non-null value in that column, so we use "IS NOT NULL" instead of LIKE
+                                        if ($searchData['value'] === '*') {
+                                            $nameQuery->orWhereNotNull($column);
+                                        } elseif (str_contains($searchData['value'], '*')) {
+                                            $likeValue = str_replace('*', '%', $searchData['value']);
+                                            $nameQuery->orWhere($column, 'LIKE', $likeValue);
                                         } else {
                                             $nameQuery->orWhere($column, 'LIKE', '%' . $searchData['value'] . '%');
                                         }
@@ -281,7 +289,7 @@ class LogController extends Controller
             'rows' => $rows,
             'columns' => [
                 ['key' => 'logId', 'label' => 'Log ID'],
-                ['key' => 'entityName', 'label' => 'Actor'],
+                ['key' => 'entityName', 'label' => 'Teacher / Staff'],
                 ['key' => 'subjects', 'label' => 'Subjects / Tags'],
                 ['key' => 'category', 'label' => 'Category'],
                 ['key' => 'time', 'label' => 'Time'],
