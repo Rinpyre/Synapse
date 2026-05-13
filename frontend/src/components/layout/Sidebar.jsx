@@ -8,7 +8,6 @@ import {
     PanelRightClose as ToggleBtnClose
 } from 'lucide-react'
 import logo from '@assets/logo.svg'
-// TODO: Implement actual logo along with special logo "type" as per the "devider" item in the items array
 
 const items = [
     { label: 'Synapse', route: '/' },
@@ -26,7 +25,7 @@ export const Sidebar = ({ open = false }) => {
         <div
             className={`group/sidebar bg-secondary relative h-full ${isOpen ? 'w-60' : 'w-17'} transition-width flex items-center justify-center duration-300`}
         >
-            <div className="menu flex h-full w-full flex-col items-start justify-start gap-2 p-3.5">
+            <div className="menu flex h-full w-full flex-col items-start justify-start gap-2 p-3">
                 {items.map((item, index) => {
                     if (item.label === 'devider') {
                         return <hr key={index} className="border-snow/20 w-full" />
@@ -40,9 +39,14 @@ export const Sidebar = ({ open = false }) => {
                                 title="Synapse"
                                 key={index}
                                 to={item.route}
-                                className="text-snow flex w-full items-center justify-center transition-opacity duration-300"
+                                className="text-accent-dark flex w-full items-center justify-center transition-opacity duration-300"
                             >
                                 <img src={logo} alt="Logo" className="h-10 w-10" />
+                                <span
+                                    className={`ml-2 text-2xl font-bold transition-opacity duration-300 ${isOpen ? 'w-auto opacity-100' : 'w-0 opacity-0'}`}
+                                >
+                                    Synapse
+                                </span>
                             </Link>
                         )
                     }
