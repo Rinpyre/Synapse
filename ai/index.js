@@ -260,34 +260,117 @@ function requireEnv(name) {
     return value
 }
 
-// TODO: Remake the tool definition to insteaf of having the input of "filters", to have each filter tag as an individual input parameter. This way the agent can choose which filters to use and fill them in a more structured way instead of having to construct the "filters" string with the correct format.
-// For example, instead of having an input like this:
-/*
-{
-    "filters": "teacher:Albæk level:4",
-    "page": 1,
-    "perPage": 20
+const directFilterTags = new Set(['id', 'level', 'category'])
+const relationalFilterTags = new Set([
+    'student',
+    'school',
+    'teacher',
+    'booking',
+    'room',
+    'equipment',
+    'parent'
+])
+const wildcardAllowedTags = new Set([...directFilterTags, ...relationalFilterTags])
+
+function normalizeFilterValue(tag, value) {
+    if (value === null || value === undefined) {
+        return null
+    }
+
+    if (typeof value !== 'string' && typeof value !== 'number') {
+        return null
+    }
+
+    const trimmed = String(value).trim()
+    if (!trimmed) {
+        return null
+    }
+
+    if (!wildcardAllowedTags.has(tag) && trimmed.includes('*')) {
+        throw new Error(`Wildcards are not supported for "${tag}" filters.`)
+    }
+
+    return trimmed.replace(/\s+/g, '_')
 }
-*/
-// We would have an input like this:
-/*
- {
-     "teacher": "Albæk",
-     "level": "4",
-     "page": 1,
-     "perPage": 20
- }
- */
-//* Then in the tool execution, we would construct the "filters" string based on which filter parameters are provided. This would make it easier for the agent to use the tool and reduce the chances of formatting errors in the filters string.
+
+function buildFiltersString(filters, freeText) {
+    const parts = []
+
+    for (const [tag, value] of Object.entries(filters)) {
+        const normalized = normalizeFilterValue(tag, value)
+        if (!normalized) {
+            continue
+        }
+
+        parts.push(`${tag}:${normalized}`)
+    }
+
+    if (typeof freeText === 'string' && freeText.trim()) {
+        const sanitized = freeText.replace(/:/g, ' ').trim()
+        const terms = sanitized.split(/\s+/).filter(Boolean)
+        parts.push(...terms)
+    }
+
+    return parts.join(' ')
+}
 
 function createTools() {
     const queryLogsDescription = 'Query logs from the backend with filters and pagination.'
     const queryLogsSchema = z.object({
-        filters: z
+        id: z.string().optional().describe('Log ID (supports * wildcard).'),
+        level: z
             .string()
+            .optional()
+            .describe('Log level (1-5, not error/info/warn) (supports * wildcard).'),
+        category: z
+            .string()
+            .optional()
+            .describe('Category text (supports * wildcard, spaces become underscores).'),
+        time: z.string().optional().describe('Time filter (HH:MM or HH:MM:SS, no wildcards).'),
+        date: z.string().optional().describe('Date filter (YYYY-MM-DD, no wildcards).'),
+        type: z.coerce
+            .number()
+            .int()
+            .nonnegative()
+            .optional()
             .describe(
-                'FORMAT: "key:value" separated by spaces. NO DUPLICATE KEYS in one query. To search multiple distinct IDs or entities, make multiple separate tool calls. 1. Use underscores for spaces (school:harvard_south). 2. Wildcards (*) allowed for Direct/Relational tags (id:30*, teacher:*), but NOT for Special tags (date, time, type, entity). 3. Use Relational tags (student, teacher, etc.) to find owners. 4. category: searches log metadata text. 5. Words without colons are free-text.'
+                'Entity type ID Entity type ID (refer to the Log Types Map in your system instructions) (no wildcards).'
             ),
+        entity: z.coerce
+            .number()
+            .int()
+            .nonnegative()
+            .optional()
+            .describe('Entity ID (no wildcards).'),
+        student: z
+            .string()
+            .optional()
+            .describe('Student name (supports * wildcard, spaces become underscores).'),
+        school: z
+            .string()
+            .optional()
+            .describe('School name (supports * wildcard, spaces become underscores).'),
+        teacher: z
+            .string()
+            .optional()
+            .describe('Teacher name (supports * wildcard, spaces become underscores).'),
+        booking: z
+            .string()
+            .optional()
+            .describe('Booking title (supports * wildcard, spaces become underscores).'),
+        room: z
+            .string()
+            .optional()
+            .describe('Room name (supports * wildcard, spaces become underscores).'),
+        equipment: z
+            .string()
+            .optional()
+            .describe('Equipment name (supports * wildcard, spaces become underscores).'),
+        parent: z
+            .string()
+            .optional()
+            .describe('Parent name (supports * wildcard, spaces become underscores).'),
+        freeText: z.string().optional().describe('Free-text search terms (no colons).'),
         page: z
             .number()
             .int()
@@ -309,9 +392,10 @@ function createTools() {
                 name: 'queryLogs',
                 description: queryLogsDescription,
                 inputSchema: queryLogsSchema,
-                execute: async ({ filters, page, perPage }) => {
+                execute: async ({ page, perPage, freeText, ...filters }) => {
                     try {
-                        const data = await queryLogs(filters, page, perPage)
+                        const filtersString = buildFiltersString(filters, freeText)
+                        const data = await queryLogs(filtersString, page, perPage)
                         return { success: true, data }
                     } catch (error) {
                         const message = error instanceof Error ? error.message : String(error)
