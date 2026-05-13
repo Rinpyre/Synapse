@@ -1,0 +1,15 @@
+flowchart LR
+  user((Browser))
+
+  subgraph Host["Docker Environment"]
+    fe[frontend container]
+    be[backend container]
+    ai[ai-service container]
+    db[(sqlserver container)]
+  end
+
+  user -->|HTTP<br/>localhost:5173| fe
+  fe -->|HTTP<br/>localhost:8000| be
+  fe -->|HTTP<br/>localhost:8001| ai
+  be -->|TDS/SQL| db
+  ai -->|LLM API| llm[LLM runtime<br/>- Ollama / LM Studio -]

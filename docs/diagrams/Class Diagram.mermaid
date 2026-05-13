@@ -1,0 +1,23 @@
+classDiagram
+  class Log {
+    +LogId
+    +Category
+    +Time
+    +Message
+    +MainEntityId
+    +ImpersonatorMainEntityId
+    +SessionId
+    +Level
+    mainEntity()
+    logEntities()
+  }
+  class LogEntity {
+    +LogEntityId
+    +LogId
+    +EntityType
+    +EntityId
+    log()
+    historicalSubject()
+  }
+
+  Log "1" --> "*" LogEntity : logEntities
