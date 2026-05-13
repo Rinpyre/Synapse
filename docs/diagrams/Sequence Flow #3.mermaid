@@ -1,0 +1,13 @@
+sequenceDiagram
+  title Sequence Flow: AI-Assisted Log Query Process
+  participant U as Support Staff
+  participant UI as Web UI
+  participant AI as AI Service
+  participant LLM as LLM Provider
+
+  U->>UI: Send AI prompt
+  UI->>AI: Send prompt + context
+  AI->>LLM: Prompt with user visible log data
+  LLM-->>AI: Return answer + summary
+  AI-->>UI: Display answer + summary
+  UI-->>U: Stream response
