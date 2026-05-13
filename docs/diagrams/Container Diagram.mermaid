@@ -1,0 +1,11 @@
+flowchart LR
+  ui[React SPA]
+  api[Laravel API]
+  ai[AI Service]
+  db[(SQL Server)]
+  llm[LLM Runtime]
+
+  ui -->|HTTP| api
+  ui -->|HTTP| ai
+  ai -->|LLM API| llm
+  api -->|TDS/SQL| db

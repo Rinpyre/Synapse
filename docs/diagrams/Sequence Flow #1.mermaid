@@ -1,0 +1,16 @@
+sequenceDiagram
+  title Sequence Flow: AI Deep Dive Log Query Process
+  participant U as Support Staff
+  participant UI as Web UI
+  participant AI as AI Service
+  participant API as Backend API
+  participant DB as SQL Server
+
+  U->>UI: Send AI prompt
+  UI->>AI: Send prompt + context
+  AI->>API: Tool call: Fetch logs
+  API->>DB: Fetch log data
+  DB-->>API: Return log data
+  API-->>AI: Tool response: Log data
+  AI-->>UI: Answer + summary
+  UI-->>U: Stream response

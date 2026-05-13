@@ -1,0 +1,13 @@
+sequenceDiagram
+  title Sequence Flow: Manual Log Query Process
+  participant U as Support Staff
+  participant UI as Web UI
+  participant API as Backend API
+  participant DB as SQL Server
+
+  U->>UI: Submit log query
+  UI->>API: Send query parameters
+  API->>DB: Fetch logs
+  DB-->>API: Return log data
+  API-->>UI: Return log data
+  UI-->>U: Display log table

@@ -1,0 +1,43 @@
+classDiagram
+  class Log {
+    +LogId: int
+    +Category: string?
+    +Time: datetime?
+    +Message: string?
+    +MainEntityId: int?
+    +ImpersonatorMainEntityId: int?
+    +SessionId: string?
+    +Level: int
+    +mainEntity(): MainEntity
+    +logEntities(): LogEntity
+  }
+  class LogEntity {
+    +LogEntityId: int
+    +LogId: int?
+    +EntityType: int?
+    +EntityId: int?
+    +log(): Log
+    +historicalSubject(): Model
+  }
+
+  Log "1" --> "*" LogEntity : logEntities
+
+  class QueryLogsInput {
+    +id: string?
+    +level: string?
+    +category: string?
+    +time: string?
+    +date: string?
+    +type: int?
+    +entity: int?
+    +student: string?
+    +school: string?
+    +teacher: string?
+    +booking: string?
+    +room: string?
+    +equipment: string?
+    +parent: string?
+    +freeText: string?
+    +page: int = 1
+    +perPage: int = 20
+  }

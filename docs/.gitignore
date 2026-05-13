@@ -8,4 +8,5 @@
 !*.tex
 
 # Except these directories
+!**/diagrams/*
 !**/images/*
