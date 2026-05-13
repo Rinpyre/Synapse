@@ -1,15 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { Message } from './Message'
 
-export const MessageList = ({ messages, isLoading = false }) => {
+export const MessageList = ({ messages, isLoading = false, onRetry, canRetry = false }) => {
     const endRef = useRef(null)
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+    }, [messages, isLoading])
 
     return (
-        <div className="flex flex-col gap-4 overflow-y-auto pr-4">
+        <div className="scroll-none flex h-full min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-4">
             {messages.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">
                     <div className="text-metadata">
@@ -20,11 +20,16 @@ export const MessageList = ({ messages, isLoading = false }) => {
             ) : (
                 <>
                     {messages.map((msg, idx) => (
-                        <Message key={idx} role={msg.role} content={msg.content} />
+                        <Message
+                            key={msg.id ?? idx}
+                            role={msg.role}
+                            content={msg.content}
+                            messageId={msg.id}
+                            onRetry={msg.id ? onRetry : null}
+                            canRetry={canRetry && Boolean(msg.id)}
+                        />
                     ))}
-                    {isLoading && (
-                        <Message role="ai" content="Thinking..." isLoading={true} />
-                    )}
+                    {isLoading && <Message role="ai" content="Thinking..." isLoading={true} />}
                 </>
             )}
             <div ref={endRef} />

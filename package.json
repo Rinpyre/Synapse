@@ -4,6 +4,8 @@
   "scripts": {
     "frontend": "npm --prefix frontend run dev",
     "backend": "cd ./backend && php artisan serve",
+    "ai-service": "npm --prefix ai run dev",
+    "ai-service:prod": "npm --prefix ai run start",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

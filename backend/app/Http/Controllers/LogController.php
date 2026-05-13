@@ -89,8 +89,11 @@ class LogController extends Controller
                     if (in_array(strtolower($key), $allowedFilters)) {
                         $filters[strtolower($key)] = $value;
                     } else {
-                        // If the key is not in allowed filters, treat it as free text
-                        $freeText[] = $part;
+                        // If the key is not in allowed filters, return and error response with the allowed filter keys
+                        return response()->json([
+                            'error' => 'Invalid filter key: ' . $key,
+                            'allowed_filters' => $allowedFilters
+                        ], 400);
                     }
                 } else {
                     $freeText[] = $part;
@@ -162,25 +165,23 @@ class LogController extends Controller
             }
         }
 
-        if (isset($filters['type']) || isset($filters['entity'])) {
-
-            $query->whereHas('logEntities', function ($legacyPivotQuery) use ($filters) {
-
-                // Filter by Type (Category)
-                if (isset($filters['type'])) {
-                    if (strtolower($filters['type']) === 'unknown') {
-                        // If the user is filtering for "unknown" types, we want to show them all the logs that have legacy pivots with unmapped EntityType IDs (like 972 for Course, 3000 for Custom Tags, etc.)
-                        $safeTypes = array_keys(Relation::morphMap());
-                        $legacyPivotQuery->whereNotIn('EntityType', $safeTypes);
-                    } else {
-                        $legacyPivotQuery->where('EntityType', (int) $filters['type']);
-                    }
-                }
-
-                // Filter by exact Entity ID
-                if (isset($filters['entity'])) {
-                    $legacyPivotQuery->where('EntityId', (int) $filters['entity']);
-                }
+        // This returns logs that are attached to a specific Entity ID (e.g., all logs related to Student with ID 123) or all logs that are attached to a specific Entity Type (e.g., all logs related to any School, which has EntityTypeId 13 in the legacy pivots)
+        // We should also support when a user types "entity:332", which is an active parent in the system, that may not have used the legacy pivots but is still searchable via the mainEntity relationship. So we want to search both the mainEntityId and the legacy pivots when filtering by entity or type.
+        if (isset($filters['entity'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('mainEntityId', $filters['entity'])
+                    ->orWhereHas('logEntities', function ($pivotQuery) use ($filters) {
+                        $pivotQuery->where('EntityId', $filters['entity']);
+                    });
+            });
+        }
+        if (isset($filters['type'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->whereHas('mainEntity', function ($meQuery) use ($filters) {
+                    $meQuery->where('EntityTypeId', $filters['type']);
+                })->orWhereHas('logEntities', function ($pivotQuery) use ($filters) {
+                    $pivotQuery->where('EntityType', $filters['type']);
+                });
             });
         }
 
@@ -236,8 +237,13 @@ class LogController extends Controller
                                 $morphQuery->where(function ($nameQuery) use ($searchData) {
                                     // Dynamically loop through FirstName, LastName, etc.
                                     foreach ($searchData['columns'] as $index => $column) {
-                                        if ($index === 0) {
-                                            $nameQuery->where($column, 'LIKE', '%' . $searchData['value'] . '%');
+                                        // If the value contains a wildcard *, convert it to a LIKE query
+                                        // If it contains ONLY a wildcard (teacher:*) then we want to match any non-null value in that column, so we use "IS NOT NULL" instead of LIKE
+                                        if ($searchData['value'] === '*') {
+                                            $nameQuery->orWhereNotNull($column);
+                                        } elseif (str_contains($searchData['value'], '*')) {
+                                            $likeValue = str_replace('*', '%', $searchData['value']);
+                                            $nameQuery->orWhere($column, 'LIKE', $likeValue);
                                         } else {
                                             $nameQuery->orWhere($column, 'LIKE', '%' . $searchData['value'] . '%');
                                         }
@@ -281,7 +287,7 @@ class LogController extends Controller
             'rows' => $rows,
             'columns' => [
                 ['key' => 'logId', 'label' => 'Log ID'],
-                ['key' => 'entityName', 'label' => 'Actor'],
+                ['key' => 'entityName', 'label' => 'Teacher / Staff'],
                 ['key' => 'subjects', 'label' => 'Subjects / Tags'],
                 ['key' => 'category', 'label' => 'Category'],
                 ['key' => 'time', 'label' => 'Time'],

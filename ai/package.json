@@ -1,0 +1,24 @@
+{
+  "name": "synapse-ai",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.46",
+    "ai": "^6.0.175",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "ollama-ai-provider-v2": "^3.5.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "nodemon": "^3.1.14"
+  }
+}
