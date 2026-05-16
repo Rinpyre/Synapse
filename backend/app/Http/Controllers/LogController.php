@@ -87,6 +87,7 @@ class LogController extends Controller
                 if (str_contains($part, ':')) {
                     [$key, $value] = explode(':', $part, 2);
                     if (in_array(strtolower($key), $allowedFilters)) {
+                        $value = str_replace('_', ' ', $value);
                         $filters[strtolower($key)] = $value;
                     } else {
                         // If the key is not in allowed filters, return and error response with the allowed filter keys
@@ -203,7 +204,28 @@ class LogController extends Controller
                         foreach ($activeRelationalTags as $tag => $config) {
                             $subQuery->orWhere(function ($typeQuery) use ($config, $filters, $tag) {
                                 $typeQuery->where('EntityTypeId', $config['type_id'])
-                                    ->where('Name', 'LIKE', '%' . $filters[$tag] . '%');
+                                    ->where(function ($nameQuery) use ($filters, $tag) {
+                                        $searchValue = $filters[$tag];
+
+                                        if ($searchValue === '*') {
+                                            $nameQuery->whereNotNull('Name');
+                                            return;
+                                        }
+
+                                        $terms = preg_split('/\s+/', trim($searchValue));
+                                        $terms = array_values(array_filter($terms, static fn($term) => $term !== ''));
+
+                                        foreach ($terms as $term) {
+                                            if ($term === '*') {
+                                                $nameQuery->whereNotNull('Name');
+                                            } elseif (str_contains($term, '*')) {
+                                                $likeValue = str_replace('*', '%', $term);
+                                                $nameQuery->where('Name', 'LIKE', $likeValue);
+                                            } else {
+                                                $nameQuery->where('Name', 'LIKE', '%' . $term . '%');
+                                            }
+                                        }
+                                    });
                             });
                         }
                     });
@@ -234,21 +256,37 @@ class LogController extends Controller
                             if (isset($legacySearchConfigs[$type])) {
                                 $searchData = $legacySearchConfigs[$type];
 
-                                $morphQuery->where(function ($nameQuery) use ($searchData) {
-                                    // Dynamically loop through FirstName, LastName, etc.
-                                    foreach ($searchData['columns'] as $index => $column) {
-                                        // If the value contains a wildcard *, convert it to a LIKE query
-                                        // If it contains ONLY a wildcard (teacher:*) then we want to match any non-null value in that column, so we use "IS NOT NULL" instead of LIKE
-                                        if ($searchData['value'] === '*') {
+                                $searchValue = $searchData['value'];
+
+                                if ($searchValue === '*') {
+                                    $morphQuery->where(function ($nameQuery) use ($searchData) {
+                                        foreach ($searchData['columns'] as $column) {
                                             $nameQuery->orWhereNotNull($column);
-                                        } elseif (str_contains($searchData['value'], '*')) {
-                                            $likeValue = str_replace('*', '%', $searchData['value']);
-                                            $nameQuery->orWhere($column, 'LIKE', $likeValue);
-                                        } else {
-                                            $nameQuery->orWhere($column, 'LIKE', '%' . $searchData['value'] . '%');
                                         }
-                                    }
-                                });
+                                    });
+                                    return;
+                                }
+
+                                $terms = preg_split('/\s+/', trim($searchValue));
+                                $terms = array_values(array_filter($terms, static fn($term) => $term !== ''));
+
+                                foreach ($terms as $term) {
+                                    $morphQuery->where(function ($nameQuery) use ($searchData, $term) {
+                                        // Dynamically loop through FirstName, LastName, etc.
+                                        foreach ($searchData['columns'] as $column) {
+                                            // If the value contains a wildcard *, convert it to a LIKE query
+                                            // If it contains ONLY a wildcard (teacher:*) then we want to match any non-null value in that column, so we use "IS NOT NULL" instead of LIKE
+                                            if ($term === '*') {
+                                                $nameQuery->orWhereNotNull($column);
+                                            } elseif (str_contains($term, '*')) {
+                                                $likeValue = str_replace('*', '%', $term);
+                                                $nameQuery->orWhere($column, 'LIKE', $likeValue);
+                                            } else {
+                                                $nameQuery->orWhere($column, 'LIKE', '%' . $term . '%');
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         });
                     });
