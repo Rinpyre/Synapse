@@ -116,6 +116,27 @@
 \pagebreak
 
 \section{Requirements} \label{sec:requirements}
+The following requirements describe in detail the extent of what the program does. Functional requirements are what the system does, while non-functional requirements are how the system behaves.
+\subsection{Functional Requirements}
+\begin{itemize}
+    \item	Log ingestion: The program must ingest log data from [Company]’s data infrastructure and support legacy log storage formats using type identifiers.
+    \item	Log viewing: The program must display paginated log entries from the database.
+    \item	Querying: The logs must be queryable with automatically suggested tags to help the user.
+    \item	AI summary: The program must host an AI assistant that summarises queried logs, to accelerate analysis of inconsistencies, errors, and patterns.
+    \item	Sharing: The user must be able to share both conversations with the AI assistant and the results of the queries.
+\end{itemize}
+\subsection{Non-Functional Requirements}
+\begin{itemize}
+    \item	Performance: The program must be responsive, with response times under 3 seconds when retrieving logs for a smooth user experience.
+    \item	Scalability: The system must be able to scale to [Company]’s production database size and hundreds of requests per minute while maintaining response times below 5 seconds.
+    \item	Usability: The interface must be clear and intuitive for users with varying technical backgrounds.
+    \item	Reliability: The program must handle errors without disrupting usability of the application while still communicating them to the user. Once the error is fixed by the user in case of an input error, the system then must return to its original operation in less than a second.
+    \item	Maintainability: The codebase must be structured to support future changes, with sufficiently decoupled components so that one can be modified without breaking others.
+    \item	Security: The program must prevent retrieval of non-log-based data or edits to the database via attacks such as SQL injection.
+    \item	Regulatory Compliance: The system must not transmit any log data to external or externally hosted services for AI processing. All inference must be performed locally to ensure compliance with GDPR, as log data may contain personally identifiable information.
+    \item	Model-Agnostic AI Pipeline: The AI assistant must be replaceable easily between providers such as Ollama or LM Studio and different locally hosted models complying with the Regulatory Compliance stated above.
+    \item	Containerisation: The whole application must be containerised for easy deployment independent of host system dependencies.
+\end{itemize}
 \pagebreak
 
 \section{Design} \label{sec:design}
