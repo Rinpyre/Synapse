@@ -12,3 +12,4 @@ Route::get('/', function () {
 });
 
 Route::get('/logs', [\App\Http\Controllers\LogController::class, 'index']);
+Route::post('/suggestions', [\App\Http\Controllers\SuggestionController::class, 'index']);
