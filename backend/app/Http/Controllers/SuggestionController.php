@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use App\Models\School;
+use App\Models\Teacher;
 use App\Models\Pupil;
+use App\Models\Booking;
+use App\Models\Room;
+use App\Models\Equipment;
+use App\Models\Guardian;
 use App\Models\Log;
 
 class SuggestionController extends Controller
 {
     public function index(Request $request)
     {
-        $fields = ['id', 'level', 'category', 'student', 'time', 'date', 'type', 'entity', 'school', 'teacher', 'booking', 'room', 'equipment', 'parent'];
+        $fields = ['id', 'level', 'category', 'time', 'date', 'type', 'entity', 'student', 'school', 'teacher', 'booking', 'room', 'equipment', 'parent'];
         $suggestions = [];
 
         $field = $request->input('field');
@@ -71,6 +76,7 @@ class SuggestionController extends Controller
                     ->pluck('Category')
                     ->toArray();
                 break;
+            //! For now we skip the 'time', 'date', 'type', and 'entity' fields as they are not as relevant for suggestions and would require more complex logic to generate meaningful suggestions
             case 'student':
                 // For the 'student' field, we will return a list of student names as suggestions
                 $suggestions = Pupil::query()
@@ -83,10 +89,78 @@ class SuggestionController extends Controller
                     ->pluck('full_name')
                     ->toArray();
                 break;
-            // TODO: Add more cases for other fields like 'time', 'date', 'type', 'entity', 'school', 'teacher', 'booking', 'room', 'equipment', 'parent'
+            case 'school':
+                // For the 'school' field, we will return a list of school names as suggestions
+                $suggestions = School::query()
+                    ->when(!empty($value), function ($query) use ($value) {
+                        $query->where('School', 'like', $value . '%');
+                    })
+                    ->distinct()
+                    ->limit(10)
+                    ->pluck('School')
+                    ->toArray();
+                break;
+            case 'teacher':
+                // For the 'teacher' field, we will return a list of teacher names as suggestions
+                $suggestions = Teacher::query()
+                    ->when(!empty($value), function ($query) use ($value) {
+                        $query->whereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", [$value . '%']);
+                    })
+                    ->selectRaw("CONCAT(FirstName, ' ', LastName) AS full_name")
+                    ->distinct()
+                    ->limit(10)
+                    ->pluck('full_name')
+                    ->toArray();
+                break;
+            case 'booking':
+                // For the 'booking' field, we will return a list of booking names as suggestions
+                $suggestions = Booking::query()
+                    ->when(!empty($value), function ($query) use ($value) {
+                        $query->where('Title', 'like', $value . '%');
+                    })
+                    ->distinct()
+                    ->limit(10)
+                    ->pluck('Title')
+                    ->toArray();
+                break;
+            case 'room':
+                // For the 'room' field, we will return a list of room names as suggestions
+                $suggestions = Room::query()
+                    ->when(!empty($value), function ($query) use ($value) {
+                        $query->where('Room', 'like', $value . '%');
+                    })
+                    ->distinct()
+                    ->limit(10)
+                    ->pluck('Room')
+                    ->toArray();
+                break;
+            case 'equipment':
+                // For the 'equipment' field, we will return a list of equipment names as suggestions
+                $suggestions = Equipment::query()
+                    ->when(!empty($value), function ($query) use ($value) {
+                        $query->where('Name', 'like', $value . '%');
+                    })
+                    ->distinct()
+                    ->limit(10)
+                    ->pluck('Name')
+                    ->toArray();
+                break;
+            case 'parent':
+                // For the 'parent' field, we will return a list of guardian names as suggestions
+                $suggestions = Guardian::query()
+                    ->when(!empty($value), function ($query) use ($value) {
+                        $query->whereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", [$value . '%']);
+                    })
+                    ->selectRaw("CONCAT(FirstName, ' ', LastName) AS full_name")
+                    ->distinct()
+                    ->limit(10)
+                    ->pluck('full_name')
+                    ->toArray();
+                break;
 
             default:
-                $suggestions = []; // For other fields, we can return an empty array or some default suggestions
+                // For other fields, we can return an empty array
+                $suggestions = [];
                 break;
         }
 
