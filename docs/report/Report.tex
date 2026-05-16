@@ -91,7 +91,15 @@
 
 % ===== CONTENT BEGINS HERE =====
 \begin{abstract}
+    SpeedAdmin develops administrative software for music and art schools. Their management system handles many different entities, such as students, teachers, and courses, and automatically generates logs to record changes and system events. The problem arises from the complexity of these logs, which makes them difficult to interpret and causes important information to be easily overlooked. Making sense of the data required manual analysis and technical knowledge, which was time-consuming and inefficient. The motivation for addressing this was to ease the workload of administrators and improve log legibility, while also using the project as a learning opportunity to gain experience working with complex databases and AI integration.
 
+    Our objective is to solve this by creating a software solution that transforms log data into structured, understandable insights based on user-specified criteria. Users describe the problem or situation they want to understand in plain language and receive a summary of the related logs — also in plain language.
+
+    The core requirement is processing user requests and returning log summaries. Beyond that, the solution must not be dependent on a specific LLM, supporting the ability to interchange models. It also needs to run consistently across different systems without requiring additional dependencies to be installed. Optionally, a frontend was to be included for a better user experience.
+
+    The project followed an agile methodology adapted to the V-Model, combining iterative weekly sprints with structured testing and validation at each stage. The solution was built using Laravel and React for the backend and frontend respectively, with Ollama enabling model-agnostic LLM integration. And Docker was used to ensure the application runs consistently across different systems without additional setup.
+
+    The resulting version of the application allows users to filter logs manually or ask AI in plain language, receiving an AI generated summary of relevant logs in return. LLM integration is achieved using a custom AI service, which supports multiple providers, such as Ollama and LM Studio, keeping the solution model-agnostic as was intended from the beginning. The overall user experience was improved, due to frontend being successfully delivered along with input suggestions for the log query.
 \end{abstract}
 \pagebreak
 
