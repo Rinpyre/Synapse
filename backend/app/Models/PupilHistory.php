@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pupil extends Model
+class PupilHistory extends Model
 {
-    protected $table = 'Pupil';  // Matches your DB table name
+    protected $table = 'PupilHistory';  // Matches your DB table name
     protected $primaryKey = 'PupilID';
     public $timestamps = false; // No created_at/updated_at in your table
-    
+
     protected $fillable = [
         'FirstName',
         'LastName',
