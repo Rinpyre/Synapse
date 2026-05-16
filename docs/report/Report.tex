@@ -1,0 +1,131 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{color}
+
+\geometry{margin=1in}
+\setlength{\headheight}{17.2pt}
+\definecolor{orange}{rgb}{1.0, 0.494, 0.153}
+
+% Header and footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Synapse - Group 12}
+\fancyfoot[C]{\thepage}
+
+% Section title formatting - reduce spacing and add periods
+\titleformat{\section}
+  {\large\bfseries}
+  {\thesection.}
+  {0.25em}
+  {}
+
+% Subsection title formatting
+\titleformat{\subsection}
+  {\normalsize\bfseries}
+  {\thesubsection.}
+  {0.25em}
+  {}
+
+% TOC customization - add dots to all entries and center title
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecaftersnum}{.}
+\renewcommand{\cftsubsecaftersnum}{.}
+\renewcommand{\cftsecnumwidth}{1.5em}
+\renewcommand{\cftsubsecnumwidth}{2em}
+
+% Center TOC title
+\renewcommand{\contentsname}{\centering\large\bfseries Table of Contents}
+\renewcommand{\cfttoctitlefont}{\hfill}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+% 2. DOCUMENT CONTENT
+\begin{document}
+
+% Custom title page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge\bfseries Synapse \par}
+    \vfill
+    {\Large\bfseries Semester Project 4 Report \par}
+    {\large\bfseries AI Summarisation and Analysis of Resource \par}
+    \vspace{1.5cm}
+
+    \vfill
+    {\Large \textbf{Group 12}} \\
+    \vspace{0.25cm}
+    \begin{tabular}{r | l}
+        Adrian Cristian Stancu & astan24@student.sdu.dk \\
+        Dorina Petra Nagy      & donag24@student.sdu.dk \\
+        Tomass Zarins          & tozar24@student.sdu.dk \\
+        Jakub Cuninka          & jacun24@student.sdu.dk \\
+        Marks Karlins          & mkarl24@student.sdu.dk \\
+        Balazs Istvan Nemeth   & banem24@student.sdu.dk \\
+    \end{tabular}
+    \vspace{1cm}
+
+    {\Large \textbf{Supervisor}} \\
+    \vspace{0.25cm}
+    \begin{tabular}{r | l}
+        Niklas Braun & niklas.braun@speedadmin.com \\
+    \end{tabular}
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ===== CONTENT BEGINS HERE =====
+\begin{abstract}
+
+\end{abstract}
+\pagebreak
+
+\section{Introduction} \label{sec:intro}
+\subsection{Motivation}
+\subsection{Objective}
+\subsection{Delimitation}
+\pagebreak
+
+\section{Methodology} \label{sec:methodology}
+\pagebreak
+
+\section{Problem Analysis} \label{sec:problem-analysis}
+\pagebreak
+
+\section{Requirements} \label{sec:requirements}
+\pagebreak
+
+\section{Design} \label{sec:design}
+\pagebreak
+
+\section{Implementation} \label{sec:implementation}
+\pagebreak
+
+\section{Testing and Validation} \label{sec:testing}
+\pagebreak
+
+\section{Conclusion} \label{sec:conclusion}
+\subsection{Summary}
+\subsection{Future Work}
+\pagebreak
+
+\begin{thebibliography}{99}
+    \bibitem{MockItem} Author Name, \textit{Title of the Book}, Publisher, Year.
+\end{thebibliography}
+
+\end{document}
