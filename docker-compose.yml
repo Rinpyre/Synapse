@@ -20,10 +20,33 @@ services:
             dockerfile: Dockerfile
         container_name: synapse-frontend
         ports:
-            - "3000:5173"
+            - "3000:80" 
         volumes:
             - ./frontend:/app
             - /app/node_modules
         restart: unless-stopped
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: synapse-backend
+        ports:
+            - "5000:8000"
+        volumes:
+            - ./backend:/var/www
+            - /var/www/vendor
+        restart: unless-stopped
+    ai:
+        build:
+            context: ./ai
+            dockerfile: Dockerfile
+        container_name: synapse-ai
+        ports:
+            - "4000:8001"
+        volumes:
+            - ./ai:/usr/src/app
+            - /usr/src/app/node_modules
+        restart: unless-stopped
+
 volumes:
     sqlserver_data:
