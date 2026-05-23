@@ -20,11 +20,21 @@ const cachedPrompt = fs.readFileSync(promptPath, 'utf-8')
 const devMode = process.env.NODE_ENV !== 'production'
 const model = createModel()
 const app = express()
-app.use(cors())
+app.use(
+    cors({
+        origin: 'http://localhost:3000'
+    })
+)
 app.use(express.json())
 const { tools, toolMetadata } = createTools()
 const stopWhen = stepCountIs(5)
 const logAiRequests = devMode || process.env.AI_LOG_LEVEL === 'debug'
+
+// These lines are duplicates and will be removed.
+// const express = require('express');
+// const cors = require('cors'); // Require the cors package
+// const app = express();
+const port = 4000;
 
 if (!devMode) {
     console.log('AI Service running in production mode.')
@@ -154,7 +164,9 @@ app.post('/api/chat/dev', async (req, res) => {
     result.pipeTextStreamToResponse(res)
 })
 
-app.listen(8001)
+app.listen(port, () => {
+    console.log(`AI service listening on port ${port}`)
+})
 
 function loadEnvironment(baseDir) {
     const envFiles = listEnvFiles(baseDir)

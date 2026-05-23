@@ -17,7 +17,7 @@ export const AiChat = () => {
         regenerate
     } = useChat({
         transport: new DefaultChatTransport({
-            api: 'http://localhost:8001/api/chat'
+            api: 'http://localhost:4000/api/chat'
         })
     })
 

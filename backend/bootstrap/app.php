@@ -11,7 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // This is the correct way to register the CORS middleware globally
+        $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
+
+        // You can keep your CSRF token exceptions if you need them
+        $middleware->validateCsrfTokens(except: [
+            'stripe/*',
+            'http://example.com/foo/bar',
+            'http://example.com/foo/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
