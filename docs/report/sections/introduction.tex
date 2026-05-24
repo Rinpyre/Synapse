@@ -1,5 +1,19 @@
 \section{Introduction} \label{sec:intro}
+
+This project is part of the 4th semester BSc Software Engineering programme at the University of Southern Denmark (Syddansk Universitet, Sønderborg Campus). The project is based on a real-world problem provided by SpeedAdmin ApS, a Danish company delivering administrative software to music and art schools. The problem focuses on the challenge of interpreting complex resource logs that are difficult to understand. Which allows admins to overlook important information with ease. Through this project, theoretical concepts are used in practice from Algorithms and Data Structures, Component-based Systems, and Artificial Intelligence which are courses from 4th semester. Our result is a flexible solution where AI models can be easily swapped out. This supports staff and customers to gain meaningful insights into system activity with ease.
+
 \subsection{Motivation}
+Administrative software systems generate large volumes of operational logs that record activity across students, teachers, bookings, and other resources. While these logs contain valuable information, their complex and detailed nature makes it difficult to interpret for both support staff and end users. SpeedAdmin faces this challenge directly. Their stuff team and customers struggle to make sense of log data even when actively trying to investigate a specific issue. This project is motivated by the need to bridge the gap between raw log data and actionable insight. We are accomplishing this by building a system that allows users to query and understand logs through natural language.
+
 \subsection{Objective}
+The objective of this project is to design and implement an intelligent software system that supports the analysis and interpretation of resource logs within the context of the SpeedAdmin use case. The system aims to process log data from an existing database, analyze it through an AI pipeline built on swappable language models via Ollama, and present results through a React-based web interface. Emphasis is placed on supporting operational scenarios, such as allowing support staff and customers to query logs through natural language prompts.
+
 \subsection{Delimitation}
+The scope of this project is intentionally limited by time, available resources, and the educational context of the semester project. The system is developed as a proof of concept rather than a production-ready solution. As such, it relies on a dataset provided by SpeedAdmin rather than a live connection to their production environment and is not intended for direct deployment in a real support workflow.
+
+The project does not aim to replace human judgment in log analysis. Also, it doesn't attempt to provide legally, or operationally binding conclusions based on the log data.
+
+Advanced features such as real-time log streaming, large-scale deployment, or enterprise level security are considered out of scope. Additionally, all AI inference is performed locally using Ollama, meaning cloud-based or externally hosted language models are explicitly excluded to ensure compliance with GDPR requirements.
+
+Finally, system evaluation is based on functional verification and manual testing performed by the development team. However, user studies, long-term usage analysis, and real-world validation with SpeedAdmin's support staff are not included and are left as potential directions for future work.
 \pagebreak
