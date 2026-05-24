@@ -1,20 +1,20 @@
-# Use an official Node.js runtime as a parent image
 FROM node:20-slim
 
 # Set the working directory in the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
+# Tell the Node.js application it is running in production
+ENV NODE_ENV=production
+
+# Copy package files and install dependencies without dev dependencies
 COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Install any needed packages
-RUN npm install
-
-# Bundle app's source
+# Copy the rest of the application source code
 COPY . .
 
-# Make port 4000 available to the world outside this container
+# Mark the ports used for doc purposes
 EXPOSE 4000
 
-# Define the command to run your app
+# Run the application
 CMD [ "node", "index.js" ]
