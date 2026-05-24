@@ -1,2 +1,34 @@
 \section{Methodology} \label{sec:methodology}
+This section outlines the development approach, tools, and coordination practices used to deliver the system, and how prior semester knowledge informed the choices made during the project.
+
+\subsection{Development Approach}
+The project is implemented as a full stack web application using PHP, JavaScript, SQL, HTML/JSX, and CSS. PHP is used for the backend, JavaScript for the frontend and AI service, SQL for database work, and HTML/JSX with CSS for the UI. The system is separated into frontend, backend, AI service, and database to keep responsibilities clear and maintenance manageable.
+
+The backend is a Laravel REST API exposing endpoints for logs and suggestions. The frontend is a React SPA built with Vite and React Router. The AI service is a Node.js and Express application that exposes chat endpoints and streams responses through the Vercel AI SDK, with tool-based log queries to the backend and support for local model providers via Ollama and OpenAI-compatible runtimes. Microsoft SQL Server is used for relational storage.
+
+\subsection{Project Management and Communication}
+Version control and collaboration were handled through Git and GitHub. Work was organized using feature branches and pull requests to encourage peer review and maintain code quality before merging. Tasks and milestones were tracked through GitHub Issues and the GitHub Projects board to provide a shared view of progress. Day-to-day coordination took place in Discord, with dedicated channels for general discussion and supervisor communication, and a recurring event for the weekly meeting.
+
+\subsection{Tools, Technologies, and Architecture}
+The system was split into clear services to keep responsibilities separated and to simplify maintenance. The main tools and frameworks used are:
+
+\begin{itemize}
+    \item \textbf{Frontend:} React 19 with Vite and React Router, with Tailwind CSS for styling.
+    \item \textbf{Backend:} Laravel 12 REST API with SQL Server drivers.
+    \item \textbf{AI service:} Node.js with Express and the Vercel AI SDK, using Zod for tool schemas and local providers via Ollama or OpenAI-compatible runtimes.
+    \item \textbf{Database:} Microsoft SQL Server 2019 with a persistent Docker volume.
+    \item \textbf{Containerization:} Docker Compose orchestrates the frontend, backend, AI service, and SQL Server containers.
+    \item \textbf{Dependencies:} npm for JavaScript tooling and Composer for PHP packages.
+\end{itemize}
+
+\subsection{Knowledge Base from Prior Semesters}
+The project was built on knowledge accumulated in previous semesters, especially the third semester courses that informed the technical and methodological choices:
+\begin{itemize}
+    \item Semesterproject: Distributed Software Systems with Embedded Elements
+    \item Web Development
+    \item Programming for Hardware Constrained Environments
+    \item Operating Systems and Distributed Systems
+    \item Data Management
+\end{itemize}
+The current fourth semester focus (Intelligent Software Systems, Artificial Intelligence, Designing Software Systems with Embedded Elements, Algorithms and Data Structures, and Component-based Systems) also shaped the AI-focused architecture and the emphasis on modular, maintainable components.
 \pagebreak
