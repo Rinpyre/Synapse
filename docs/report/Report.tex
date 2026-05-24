@@ -90,68 +90,15 @@
 \newpage
 
 % ===== CONTENT BEGINS HERE =====
-\begin{abstract}
-    SpeedAdmin develops administrative software for music and art schools. Their management system handles many different entities, such as students, teachers, and courses, and automatically generates logs to record changes and system events. The problem arises from the complexity of these logs, which makes them difficult to interpret and causes important information to be easily overlooked. Making sense of the data required manual analysis and technical knowledge, which was time-consuming and inefficient. The motivation for addressing this was to ease the workload of administrators and improve log legibility, while also using the project as a learning opportunity to gain experience working with complex databases and AI integration.
-
-    Our objective is to solve this by creating a software solution that transforms log data into structured, understandable insights based on user-specified criteria. Users describe the problem or situation they want to understand in plain language and receive a summary of the related logs — also in plain language.
-
-    The core requirement is processing user requests and returning log summaries. Beyond that, the solution must not be dependent on a specific LLM, supporting the ability to interchange models. It also needs to run consistently across different systems without requiring additional dependencies to be installed. Optionally, a frontend was to be included for a better user experience.
-
-    The project followed an agile methodology adapted to the V-Model, combining iterative weekly sprints with structured testing and validation at each stage. The solution was built using Laravel and React for the backend and frontend respectively, with Ollama enabling model-agnostic LLM integration. And Docker was used to ensure the application runs consistently across different systems without additional setup.
-
-    The resulting version of the application allows users to filter logs manually or ask AI in plain language, receiving an AI generated summary of relevant logs in return. LLM integration is achieved using a custom AI service, which supports multiple providers, such as Ollama and LM Studio, keeping the solution model-agnostic as was intended from the beginning. The overall user experience was improved, due to frontend being successfully delivered along with input suggestions for the log query.
-\end{abstract}
-\pagebreak
-
-\section{Introduction} \label{sec:intro}
-\subsection{Motivation}
-\subsection{Objective}
-\subsection{Delimitation}
-\pagebreak
-
-\section{Methodology} \label{sec:methodology}
-\pagebreak
-
-\section{Problem Analysis} \label{sec:problem-analysis}
-\pagebreak
-
-\section{Requirements} \label{sec:requirements}
-The following requirements describe in detail the extent of what the program does. Functional requirements are what the system does, while non-functional requirements are how the system behaves.
-\subsection{Functional Requirements}
-\begin{itemize}
-    \item	Log ingestion: The program must ingest log data from Speedadmin’s data infrastructure and support legacy log storage formats using type identifiers.
-    \item	Log viewing: The program must display paginated log entries from the database.
-    \item	Querying: The logs must be queryable with automatically suggested tags to help the user.
-    \item	AI summary: The program must host an AI assistant that summarises queried logs, to accelerate analysis of inconsistencies, errors, and patterns.
-    \item	Sharing: The user must be able to share both conversations with the AI assistant and the results of the queries.
-\end{itemize}
-\subsection{Non-Functional Requirements}
-\begin{itemize}
-    \item	Performance: The program must be responsive, with response times under 3 seconds when retrieving logs for a smooth user experience.
-    \item	Scalability: The system must be able to scale to Speedadmin’s production database size and hundreds of requests per minute while maintaining response times below 5 seconds.
-    \item	Usability: The interface must be clear and intuitive for users with varying technical backgrounds.
-    \item	Reliability: The program must handle errors without disrupting usability of the application while still communicating them to the user. Once the error is fixed by the user in case of an input error, the system then must return to its original operation in less than a second.
-    \item	Maintainability: The codebase must be structured to support future changes, with sufficiently decoupled components so that one can be modified without breaking others.
-    \item	Security: The program must prevent retrieval of non-log-based data or edits to the database via attacks such as SQL injection.
-    \item	Regulatory Compliance: The system must not transmit any log data to external or externally hosted services for AI processing. All inference must be performed locally to ensure compliance with GDPR, as log data may contain personally identifiable information.
-    \item	Model-Agnostic AI Pipeline: The AI assistant must be replaceable easily between providers such as Ollama or LM Studio and different locally hosted models complying with the Regulatory Compliance stated above.
-    \item	Containerisation: The whole application must be containerised for easy deployment independent of host system dependencies.
-\end{itemize}
-\pagebreak
-
-\section{Design} \label{sec:design}
-\pagebreak
-
-\section{Implementation} \label{sec:implementation}
-\pagebreak
-
-\section{Testing and Validation} \label{sec:testing}
-\pagebreak
-
-\section{Conclusion} \label{sec:conclusion}
-\subsection{Summary}
-\subsection{Future Work}
-\pagebreak
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/methodology}
+\input{sections/problem-analysis}
+\input{sections/requirements}
+\input{sections/design}
+\input{sections/implementation}
+\input{sections/testing}
+\input{sections/conclusion}
 
 \begin{thebibliography}{99}
     \bibitem{MockItem} Author Name, \textit{Title of the Book}, Publisher, Year.
