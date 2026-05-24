@@ -5,10 +5,6 @@ node_modules/
 .env
 .env.*
 
-# Build outputs
-dist/
-build/
-
 # Git
 .git/
 .gitignore
