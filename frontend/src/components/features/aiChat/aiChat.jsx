@@ -6,6 +6,7 @@ import { SquarePen as NewChatIcon, Clipboard as CopyChatIcon, Check } from 'luci
 import { copyToClipboard } from '@utils'
 
 export const AiChat = () => {
+    const aiApiUrl = import.meta.env.VITE_AI_SERVICE_URL || window.location.origin
     const {
         messages: chatMessages,
         sendMessage,
@@ -17,7 +18,7 @@ export const AiChat = () => {
         regenerate
     } = useChat({
         transport: new DefaultChatTransport({
-            api: 'http://localhost:4000/api/chat'
+            api: `${aiApiUrl}/ai/chat`
         })
     })
 
