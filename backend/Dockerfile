@@ -1,9 +1,9 @@
-FROM php:8.4-fpm-bookworm
+FROM php:8.4-cli-bookworm
 
 WORKDIR /var/www
 
 # Install system dependencies, including those for adding new repositories
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     libpng-dev \
@@ -12,20 +12,17 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     gnupg \
-    lsb-release \
     unixodbc-dev \
-    ca-certificates
-
-# Add Microsoft's official repository, update, and install the driver in a single layer
-RUN curl -sS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg && \
-    echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg trusted=yes] https://packages.microsoft.com/debian/$(lsb_release -rs | cut -d'.' -f1)/prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/mssql-release.list && \
-    apt-get update && \
-    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
-
-# Install PHP extensions
-RUN pecl install sqlsrv pdo_sqlsrv
-RUN docker-php-ext-enable sqlsrv pdo_sqlsrv
-RUN docker-php-ext-install mbstring exif pcntl bcmath gd xml
+    ca-certificates \
+    && curl -sS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg \
+    && echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18 mssql-tools18 \
+    && pecl install sqlsrv pdo_sqlsrv \
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv \
+    && docker-php-ext-install mbstring exif pcntl sockets bcmath gd xml \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -33,14 +30,18 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy existing application directory contents
 COPY . .
 
-# Install composer dependencies
-RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist
+# Install composer dependencies optimized for production
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Copy application files and set permissions
+# Download the native Linux RoadRunner binary inside the container
+RUN vendor/bin/rr get-binary && chmod +x rr
+
+# Set permissions for Laravel's storage and cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Expose port 8000 and start php-fpm server
+# Expose the port that Laravel will run on
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Fire up Octane via RoadRunner
+CMD ["php", "artisan", "octane:start", "--server=roadrunner", "--host=0.0.0.0", "--port=8000", "--rpc-port=6001"]

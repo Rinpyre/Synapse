@@ -22,6 +22,11 @@ bootstrap/cache/*
 phpunit.xml
 tests/
 
+# RoadRunner
+rr
+rr.exe
+.rr.yaml
+
 # Docker-related files
 Dockerfile
 .dockerignore
