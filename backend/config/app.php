@@ -54,9 +54,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    /*----------------------------------
-    |
-    | This URL is used by the console to prop
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
@@ -71,9 +69,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Application Locale Configuration----------------------------------
-    |
-    | This URL is used by the console to prop
+    | Application Locale Configuration
     |--------------------------------------------------------------------------
     |
     | The application locale determines the default locale that will be used
