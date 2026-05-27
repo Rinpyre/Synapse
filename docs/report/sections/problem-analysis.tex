@@ -1,2 +1,19 @@
-\section{Problem Analysis} \label{sec:problem-analysis}
+\section{Problem Analysis}
+This chapter provides a detailed breakdown of the problem addressed by the Synapse project. It analyzes the key challenges surrounding operational log interpretation, the potential bottlenecks introduced by artificial intelligence, and the strict technical constraints that shaped the system's architecture.
+
+\subsection{The Semantic Gap in Log Interpretation}
+Modern administrative systems generate massive volumes of operational log data to monitor user actions, services, and internal processes. In the case of SpeedAdmin, these logs track highly detailed, verbose activity regarding students, teachers, schools, and resources. The primary problem is the semantic gap between raw, technical log entries and actionable, human-readable insights. Currently, extracting meaningful information requires significant technical knowledge, contextual awareness, and manual effort. Support staff often have to manually search through multiple scattered entries to diagnose a single issue, which increases cognitive load and slows down troubleshooting.
+
+Furthermore, end users and support staff typically describe issues using ambiguous, natural language. Traditional filtering mechanisms often lack the flexibility to handle these queries, as they rely on exact parameter matches and an intimate understanding of the underlying database structure.
+
+\subsection{Data Complexity and Fragmentation}
+A major challenge lies in the inherent complexity and relational fragmentation of the data. Information necessary to understand a single operational event may be spread across multiple database entities, such as combining data from a \texttt{LogEntity} with a specific \texttt{BookingSlot} or \texttt{MainEntity}. This fragmentation makes it nearly impossible to understand issues in isolation, necessitating a system capable of linking related logs and synthesizing a comprehensive overview. Additionally, the system must handle inconsistencies within the data itself, such as the logs containing a mixture of English, Danish, and Icelandic languages, further complicating automated analysis.
+
+\subsection{Bottlenecks in AI Reliability}
+While Large Language Models (LLMs) excel at translating natural language into technical queries and generating human-readable summaries, their integration introduces reliability bottlenecks. LLMs can struggle to provide relevant information or may hallucinate facts if the context is not strictly defined and constrained. Ensuring that the generated responses are both accurate and strictly grounded in the retrieved log data is a significant challenge. Consequently, the AI service must be designed as an assistive tool that highlights anomalies and patterns, rather than an autonomous replacement for human judgment.
+
+\subsection{Architectural Constraints and Privacy}
+The system must operate within strict regulatory and architectural constraints. Because the log data contains sensitive user information (even with communication data anonymized for the provided dataset), sending data to external, cloud-based AI providers is a severe privacy risk. Therefore, all AI inference must be performed locally to maintain GDPR compliance.
+
+From a maintainability perspective, the rapid evolution of AI technology dictates that the system cannot be tightly coupled to a single model. The architecture must remain model-agnostic, defining strict input and output interfaces so that underlying models can be swapped out easily. This necessity directly influenced the decision to adopt a modular, component-based architecture using Ollama, aligning with the principles taught in the Component-Based Systems course and ensuring long-term flexibility.
 \pagebreak
