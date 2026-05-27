@@ -1,0 +1,32 @@
+# Dependencies
+vendor/
+node_modules/
+
+# Secrets & Environment
+.env
+.env.backup
+*.key
+
+# Git
+.git/
+.gitignore
+
+# Logs and temporary caches
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+
+# Testing & Dev tools
+phpunit.xml
+tests/
+
+# RoadRunner
+rr
+rr.exe
+.rr.yaml
+
+# Docker-related files
+Dockerfile
+.dockerignore

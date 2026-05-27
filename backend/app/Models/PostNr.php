@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Postnr extends Model
+class PostNr extends Model
 {
     protected $table = 'Postnr';  // Matches your DB table name
     protected $primaryKey = 'PostnrID';

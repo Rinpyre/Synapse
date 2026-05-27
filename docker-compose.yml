@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
     sqlserver:
         build: ./database
@@ -12,6 +10,27 @@ services:
             MSSQL_PID: ${MSSQL_PID}
         volumes:
             - sqlserver_data:/var/opt/mssql
+        restart: unless-stopped
+
+    frontend:
+        build: ./frontend
+        container_name: synapse-frontend
+        ports:
+            - "3000:80"
+        restart: unless-stopped
+
+    backend:
+        build: ./backend
+        container_name: synapse-backend
+        env_file:
+            - ./backend/.env.docker
+        restart: unless-stopped
+
+    ai:
+        build: ./ai
+        container_name: synapse-ai
+        env_file:
+            - ./ai/.env.docker
         restart: unless-stopped
 
 volumes:

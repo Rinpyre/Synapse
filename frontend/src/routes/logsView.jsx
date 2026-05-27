@@ -153,7 +153,10 @@ export const LogsViewPage = () => {
             setError('')
             updateBrowserUrl({ queryValue, page, perPage })
 
-            const apiUrl = new URL('/api/logs', 'http://localhost:8000')
+            const apiUrl = new URL(
+                '/api/logs',
+                import.meta.env.VITE_BACKEND_URL || window.location.origin
+            )
             if (queryValue) {
                 apiUrl.searchParams.set('filters', queryValue)
             }

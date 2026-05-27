@@ -1,6 +1,15 @@
-.env
+# Secret environment variables (let .env.example to git, but ignore ALL other .env files)
+.env*
+!.env.example
+
+# Dependencies
 node_modules
+vendor
+
+# Logs
 *.log*
+
+# Other files to ignore
 DATASET1
 DATASET2
 .fake

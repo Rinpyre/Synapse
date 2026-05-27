@@ -20,11 +20,16 @@ const cachedPrompt = fs.readFileSync(promptPath, 'utf-8')
 const devMode = process.env.NODE_ENV !== 'production'
 const model = createModel()
 const app = express()
-app.use(cors())
+app.use(
+    cors({
+        origin: process.env.FRONTEND_URL || 'http://localhost:3000'
+    })
+)
 app.use(express.json())
 const { tools, toolMetadata } = createTools()
 const stopWhen = stepCountIs(5)
 const logAiRequests = devMode || process.env.AI_LOG_LEVEL === 'debug'
+const port = process.env.PORT ? Number(process.env.PORT) : 4000
 
 if (!devMode) {
     console.log('AI Service running in production mode.')
@@ -45,7 +50,7 @@ export const getSystemPrompt = () => {
 }
 const sanitizeMessages = (messages) => messages.filter((message) => message?.role !== 'system')
 
-app.post('/api/chat', async (req, res) => {
+app.post('/ai/chat', async (req, res) => {
     const requestId = randomUUID()
     res.setHeader('x-request-id', requestId)
     console.log(
@@ -67,7 +72,7 @@ app.post('/api/chat', async (req, res) => {
     const requestLogger = logAiRequests
         ? createRequestLogger({
               requestId,
-              route: '/api/chat',
+              route: '/ai/chat',
               model,
               system: finalSystem,
               messages: safeMessages,
@@ -93,7 +98,7 @@ app.post('/api/chat', async (req, res) => {
     result.pipeUIMessageStreamToResponse(res)
 })
 
-app.post('/api/chat/dev', async (req, res) => {
+app.post('/ai/chat/dev', async (req, res) => {
     const requestId = randomUUID()
     res.setHeader('x-request-id', requestId)
     console.log(
@@ -131,7 +136,7 @@ app.post('/api/chat/dev', async (req, res) => {
     const requestLogger = logAiRequests
         ? createRequestLogger({
               requestId,
-              route: '/api/chat/dev',
+              route: '/ai/chat/dev',
               model,
               system: finalSystem,
               messages: safeUiMessages,
@@ -154,7 +159,9 @@ app.post('/api/chat/dev', async (req, res) => {
     result.pipeTextStreamToResponse(res)
 })
 
-app.listen(8001)
+app.listen(port, () => {
+    console.log(`AI service listening on port ${port}`)
+})
 
 function loadEnvironment(baseDir) {
     const envFiles = listEnvFiles(baseDir)

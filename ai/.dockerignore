@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Secrets & Environment
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker-related files
+Dockerfile
+.dockerignore
