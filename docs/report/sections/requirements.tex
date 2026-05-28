@@ -16,7 +16,7 @@ The following requirements describe in detail the extent of what the program doe
     \item Reliability: The program must handle errors without disrupting usability of the application while still communicating them to the user. Once the error is fixed by the user in case of an input error, the system then must return to its original operation in less than a second.
     \item Maintainability: The codebase must be structured to support future changes, with sufficiently decoupled components so that one can be modified without breaking others.
     \item Security: The program must prevent retrieval of non-log-based data or edits to the database via attacks such as SQL injection.
-    \item Regulatory Compliance: The system must not transmit any log data to external or externally hosted services for AI processing. All inference must be performed locally to ensure compliance with GDPR, as log data may contain personally identifiable information.
+    \item Regulatory Compliance: The system must not transmit any log data to external or externally hosted services for AI processing. All inference must be performed locally to ensure compliance with certain safety guidelines, as log data may contain personally identifiable information.
     \item Model-Agnostic AI Pipeline: The AI assistant must be replaceable easily between providers such as Ollama or LM Studio and different locally hosted models complying with the Regulatory Compliance stated above.
     \item Containerisation: The whole application must be containerised for easy deployment independent of host system dependencies.
 \end{itemize}
