@@ -8,5 +8,33 @@ This architecture is illustrated in [architecture diagram image here].
     \item	AI Service: Hosts the LLMs locally to comply with the project Requirements. Also allows the LLM to make tool requests to the service layer for additional data, which forwards the request to the backend.
     \item	Database: A relational database instance storing all relevant log and school data. [insert database diagram]
 \end{itemize}
+\subsection{Technology and framework considerations:}
+\begin{itemize}
+    \item Frontend:
+    \begin{itemize}
+        \item React: We chose a library that we all have some experience in. It also allows to have our architecture decoupled, as well-designed components don’t depend on each other and can be easily updated or upkept. The virtual DOM also makes it faster and more responsive when reloading with new data from requests.
+        \item Vite: The out of the box support for React and the fast HMR (Hot Module Replacement) sped up development tremendously.
+        \item Tailwind: Sped up prototyping and getting the project started with many built in classes for easily consistent design across the board.
+    \end{itemize}
+    \item Backend:
+    \begin{itemize}
+        \item Laravel: Being the web framework we were taught in, groupwork felt quick in it. It also worked great for the speed in which we needed to develop.
+        \item Rest:
+    \end{itemize}
+    \item	Database:
+    \begin{itemize}
+        \item	Microsoft SQL Server:
+    \end{itemize}
+    \item	AI:
+    \begin{itemize}
+        \item	Node JS:
+        \item	Varcels AI SDK
+        \item	Ollama/LM studio:
+    \end{itemize}
+    \item	Containerization:
+    \begin{itemize}
+        \item	Docker
+        \item	Docker Compose
+    \end{itemize}
+\end{itemize}
 \pagebreak
-\subsection{}
