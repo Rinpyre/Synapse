@@ -1,40 +1,60 @@
 \section{Design} \label{sec:design}
-This chapter describes the microservice architecture structure of our system, detailing it on a high level and explaining the relationships between components.
-This architecture is illustrated in [architecture diagram image here].
-\subsection{Architecture:}
+This chapter outlines the architectural blueprints of the Synapse application. To satisfy the project's scalability, maintainability, and strict separation-of-concerns requirements, the system was designed using a containerized microservice architecture. This chapter details the system components, their interactions, and the underlying data structures, serving as the theoretical foundation for the technical implementation.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{images/component_diagram.png}
+%     \caption{High-level Microservice Architecture of the Synapse System}
+%     \label{fig:architecture}
+% \end{figure}
+
+\subsection{System Architecture}
+The application ecosystem is divided into four primary, decoupled services, each with a strictly defined operational role:
+
 \begin{itemize}
-    \item	Frontend: Web-based application interface which provides users with access to logs, submitting queries and interacting with the AI agent
-    \item	Backend: Backend infrastructure that manages communication with the log database, interacts with the hosted AI model for data handling and responses.
-    \item	AI Service: Hosts the LLMs locally to comply with the project Requirements. Also allows the LLM to make tool requests to the service layer for additional data, which forwards the request to the backend.
-    \item	Database: A relational database instance storing all relevant log and school data. [insert database diagram]
+    \item \textbf{Frontend Client (Presentation Layer):} Designed as a Single Page Application (SPA) utilizing \texttt{react-router-dom}. The architectural layout is bootstrapped via a shared application shell (\texttt{AppLayout}) that establishes a persistent, collapsible navigation sidebar and a flexible main content area. The primary workflow occurs on a centralized dashboard view (\texttt{LogsViewPage}), which combines a paginated data table for log viewing with a dedicated, persistent sidebar chat panel for the AI assistant. This layout ensures users can interact with the AI without losing their current contextual state within the logs.
+
+    \item \textbf{Backend API (Data \& Logic Gateway):} Structured as a strictly "headless" API. The backend does not render any UI views; instead, its routing is confined entirely to JSON endpoints (e.g., \texttt{/api/logs} and \texttt{/api/suggestions}). Controllers such as the \texttt{LogController} are designed to build composable database queries—handling relational joins, dynamic filtering, and pagination—before returning a normalized JSON payload. This ensures the frontend data tables and the AI tool-callers consume data through identical, standardized gateways.
+
+    \item \textbf{AI Service (Orchestration Layer):} A dedicated Node.js service that handles natural language processing by interfacing with local Large Language Models (LLMs) through runtimes such as Ollama and LM Studio. The architectural decision to isolate the AI logic into its own container ensures that intensive natural language processing tasks do not block the primary backend API threads. This service exposes specific endpoints (e.g., \texttt{/ai/chat}), loads and caches the system prompt, and orchestrates the continuous data loop between the user's input, the LLM, and the backend API.
+
+    \item \textbf{Database Server (Persistence Layer):} A relational Microsoft SQL Server instance storing all system logs, entity relationships, and school data provided by SpeedAdmin.
 \end{itemize}
-\subsection{Technology and framework considerations:}
+
+\subsection{Artificial Intelligence Subsystem \& Orchestration}
+Integrating an LLM into an operational environment requires strict behavioral architecture to ensure data security and predictable outputs. The AI subsystem utilizes the Vercel AI SDK to manage a bounded \texttt{streamText} tool-calling loop.
+
+To mitigate the risk of possible prompt injection attacks, the service is architected to explicitly reject inbound system messages originating from the client. By limiting this attack surface, the architecture ensures the internal, server-side system prompt remains the primary governing ruleset. The AI is assigned the persona of "Simon, the Synapse Support AI Assistant," and is bound by several guardrails:
 \begin{itemize}
-    \item Frontend:
-    \begin{itemize}
-        \item React: We chose a library that we all have some experience in. It also allows to have our architecture decoupled, as well-designed components don’t depend on each other and can be easily updated or upkept. The virtual DOM also makes it faster and more responsive when reloading with new data from requests.
-        \item Vite: The out of the box support for React and the fast HMR (Hot Module Replacement) sped up development tremendously.
-        \item Tailwind: Sped up prototyping and getting the project started with many built in classes for easily consistent design across the board.
-    \end{itemize}
-    \item Backend:
-    \begin{itemize}
-        \item Laravel: Being the web framework we were taught in, groupwork felt quick in it. It also worked great for the speed in which we needed to develop.
-        \item Rest:
-    \end{itemize}
-    \item	Database:
-    \begin{itemize}
-        \item	Microsoft SQL Server:
-    \end{itemize}
-    \item	AI:
-    \begin{itemize}
-        \item	Node JS:
-        \item	Varcels AI SDK
-        \item	Ollama/LM studio:
-    \end{itemize}
-    \item	Containerization:
-    \begin{itemize}
-        \item	Docker
-        \item	Docker Compose
-    \end{itemize}
+    \item \textbf{Strict Scope Boundary:} The AI is architecturally restricted from answering queries outside the domain of Synapse log analytics, minimizing the risk of the model being hijacked for unintended tasks.
+    \item \textbf{Zero Hallucination Policy (RAG):} Operating on principles of Retrieval Augmented Generation, the model is instructed to base its answers exclusively on the provided chat history or dynamically retrieved system logs. It uses a structured \texttt{zod} schema to execute the \texttt{queryLogs} tool, explicitly defining what data it is permitted to request.
+    \item \textbf{Contextual and Multilingual Translation:} The prompt injects critical domain knowledge (e.g., the difference between "Bookings" and "Booking Slots"). Furthermore, because the raw database logs contain a mixture of English, Danish, and Icelandic, the AI is designed to act as an automatic translation layer, returning answers in the language of the user's original prompt.
 \end{itemize}
+
+\subsection{Component Interaction and Query Normalization}
+A significant design challenge was establishing a unified method for querying complex logs that both human users and AI models could easily construct. Instead of relying on complex JSON query payloads, the system utilizes a unified "Tag-Based" query string architecture, inspired by search mechanics on platforms like GitHub.
+
+Both the Frontend UI and the AI Service communicate with the Backend API using this standardized string format (e.g., \texttt{student:Bobby category:LoginSystem}). To further enhance search capabilities, the tag system supports wildcard operators for partial string matching (e.g., \texttt{student:Bo*} to match "Bobby" and "Bob").
+\begin{enumerate}
+    \item \textbf{Human Interaction:} Users leverage autocomplete values supplied by the backend's \texttt{SuggestionController} to build this query string manually in a search bar.
+    \item \textbf{AI Interaction:} When the LLM decides it needs data, it outputs a structured JSON tool call. The AI Service's \texttt{queryLogs} execution pipeline translates these parameters into the identical tag-based query string format and forwards it to the backend.
+\end{enumerate}
+This design guarantees that the AI and the user are subject to the exact same underlying authorization and filtering logic.
+
+\subsection{Database Schema and Polymorphic Relational Design}
+The underlying data structure relies on a highly relational schema. However, a critical constraint identified during problem analysis was the lack of strict database-level SQL foreign key constraints connecting the central \texttt{Log} tables to the various subject entities.
+
+To resolve this architectural gap without mutating the provided dataset's raw SQL schema, the system design shifts the burden of relational mapping to the application layer. The backend Object-Relational Mapper (Eloquent) establishes relationships directly at the model layer:
+\begin{itemize}
+    \item \textbf{Modern Global Identity:} The \texttt{Log} model is mapped to belong directly to a \texttt{MainEntity}, utilizing the stable \texttt{MainEntityId} and \texttt{EntityTypeId} identifiers.
+    \item \textbf{Legacy Discovery:} To handle historical logs, the \texttt{LogEntity} records resolve subjects through a polymorphic \texttt{morphTo} relationship. This relies on a centrally mapped \texttt{EntityType} integer registry, ensuring legacy tables remain discoverable despite the absence of foreign keys.
+\end{itemize}
+By defining these polymorphic relationships centrally within the application's service providers, the backend's controllers can utilize relationship-existence queries (such as \texttt{whereHas} and \texttt{whereHasMorph}). This allows the API to successfully resolve a single user or AI query across both old and new database schemas seamlessly.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth]{../images/database_diagram.png}
+%     \caption{Entity Relationship Diagram of the SpeedAdmin Dataset}
+%     \label{fig:database}
+% \end{figure}
 \pagebreak
