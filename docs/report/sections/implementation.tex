@@ -1,5 +1,5 @@
 \section{Implementation} \label{sec:implementation}
-This chapter details the technical execution of the Synapse system. It highlights the translation of architectural blueprints into functional code, focusing on frontend composition, backend query parsing, ORM relational mapping, and the optimizations applied to the AI service and containerized environment.
+This chapter details the technical realization of the Synapse system, linking the architectural blueprints and project requirements to concrete implementation choices. The focus is on frontend composition, backend query parsing, ORM relational mapping, AI streaming, and system reliability.
 
 \subsection{Frontend SPA Routing and Composition}
 \begin{sloppypar}
@@ -46,8 +46,13 @@ The \texttt{AppLayout} acts as the structural shell, rendering a persistent navi
 </div>
 \end{verbatim}
 
-\subsection{Backend Query Parsing and Database Interaction}
-To realize the tag-based query design (e.g., \texttt{student:Bobby category:LoginSystem}), the backend \texttt{LogController} processes incoming query strings through a custom parsing algorithm. The \texttt{filters} string is URL-decoded, split by spaces, and iterated over. Tokens containing a colon are split into key-value pairs (with underscores converted to spaces), while remaining tokens are aggregated as free-text search terms:
+Styling across these components is managed via Tailwind CSS, utilizing utility classes to ensure visual consistency without the risk of cascading class name conflicts.
+
+\subsection{Backend Query Parsing, Suggestions, and Security}
+To lower the barrier for non-technical users, the frontend fetches tag suggestions from the backend. This suggestion endpoint queries the database for distinct values and caches the results to avoid repeated expensive lookups during high-frequency use.
+
+
+When a user submits a tag-based query (e.g., \texttt{student:Bobby category:LoginSys*}), the backend \texttt{LogController} processes the incoming string through a custom parsing algorithm. The \texttt{filters} string is URL-decoded, split by spaces, and iterated over. Tokens containing a colon are split into key-value pairs (with underscores converted to spaces), while remaining tokens are aggregated as free-text search terms:
 
 \begin{verbatim}
 if (str_contains($part, ':')) {
@@ -61,7 +66,7 @@ if (str_contains($part, ':')) {
 }
 \end{verbatim}
 
-Direct column filters incorporate wildcard support by replacing the \texttt{*} character with SQL \texttt{\%} wildcards for \texttt{LIKE} queries via the Eloquent query builder.
+\textbf{Security and SQL Injection Prevention:} A critical non-functional requirement was securing the database. Once parsed, these filters are applied to the database using Laravel's Eloquent ORM. Because Eloquent utilizes PDO parameter binding under the hood, all user-supplied input is automatically sanitized. This fundamentally prevents SQL injection attacks, safely allowing column filters to incorporate wildcard support by replacing the \texttt{*} character with SQL \texttt{\%} wildcards and using \texttt{LIKE} queries via the Eloquent query builder.
 
 \subsection{Relational Mapping via Polymorphism}
 Because the dataset lacked strict SQL foreign key constraints, relationships were defined natively within the Eloquent models. The \texttt{Log} model establishes a standard \texttt{belongsTo} link with the modern global identity structure:
@@ -84,7 +89,7 @@ public function historicalSubject()
 }
 \end{verbatim}
 
-To bridge the database's integer-based \texttt{EntityType} column to these application models, a morph map was enforced in the \texttt{AppServiceProvider}:
+To bridge the database's integer-based \texttt{EntityType} column to human-readable models, a morph map was enforced in the \texttt{AppServiceProvider}:
 
 \begin{verbatim}
 Relation::enforceMorphMap([
@@ -100,10 +105,12 @@ Relation::enforceMorphMap([
 
 When querying logs by entity, the controller utilizes \texttt{whereHas} and \texttt{whereHasMorph} to simultaneously search both the modern global identity structure and the legacy polymorphic pivots.
 
-\subsection{AI Tool Calling and Token Optimization}
+\subsection{AI Service Streaming and Token Optimization}
 \begin{sloppypar}
     The Node.js AI service orchestrates the LLM using the Vercel AI SDK. To enforce strict data fetching boundaries, the \texttt{queryLogs} tool is governed by a Zod schema (\texttt{queryLogsSchema}) that explicitly defines permissible filter tags.
 \end{sloppypar}
+
+\textbf{Server-Sent Events (SSE):} To address performance requirements, the AI service streams responses back to the frontend using Server-Sent Events. This allows partial results to appear progressively, vastly improving perceived responsiveness for long log summaries rather than forcing the user to wait for full generation.
 
 \textbf{Log Formatting Optimization:} Feeding raw JSON database responses back to the LLM consumes excessive context window tokens. A custom \texttt{formatLogs} function intercepts the backend's JSON and flattens each log into a dense, pipe-delimited string:
 
@@ -118,9 +125,13 @@ const responseText =
 \end{verbatim}
 This structured plaintext format allows the model to analyze logs reliably while drastically reducing token usage.
 
-\subsection{Containerization and Development Refactoring}
-Throughout the development lifecycle, optimizations were required to stabilize the environment:
+\subsection{Sharing Functionality and State Management}
+To fulfill the project's sharing requirement without relying on complex server-side session storage, functionality was built directly into the client application. Query results are serialized into a shareable URL encoding the active filter parameters, allowing recipients to reproduce the exact same filtered view. Furthermore, AI conversations are persisted in the frontend's local state and can be exported as formatted text for support ticketing.
+
+\subsection{Error Handling, Reliability, and Refactoring}
+To meet the Reliability non-functional requirement, error handling as well as several optimizations were implemented consistently across all services:
 \begin{itemize}
+    \item \textbf{Structured Responses:} The backend returns structured JSON error responses with appropriate HTTP status codes. The frontend maps these codes to non-disruptive, inline UI messages, allowing the user to correct inputs and resume operation instantly. The AI service similarly wraps model timeouts in structured responses to prevent application crashes.
     \item \textbf{Docker Optimization:} Comprehensive \texttt{.dockerignore} files were implemented across all services to exclude \texttt{node\_modules} and \texttt{vendor} directories. Node services enforced \texttt{npm ci} to guarantee deterministic builds, and multiple \texttt{RUN} directives in the backend Dockerfile were consolidated to reduce image layer overhead.
     \item \textbf{Logging Strategy:} For API debugging, the team utilized PHP's native \texttt{error\_log} rather than Laravel's file-based \texttt{Log::debug()}. This routed backend logs directly to the Docker container's standard output, streamlining real-time debugging.
     \item \textbf{Environment Constraints:} The system queries one SpeedAdmin dataset at a time. The active database is defined via the \texttt{DB\_DATABASE} variable in the backend's \texttt{.env} file, requiring a manual environment update and container restart to switch datasets.
