@@ -7,10 +7,10 @@ The project was executed using an iterative, agile-inspired development lifecycl
 \subsection{Technologies and Frameworks}
 The technology stack was selected to balance development speed, system stability, and strict compliance with the project's data privacy constraints.
 \begin{itemize}
-    \item \textbf{Frontend:} Built using React with Vite and styled via Tailwind CSS, adhering to the recommendation for a React-based interface to ensure a responsive and dynamic user experience.
-    \item \textbf{Backend:} A Laravel REST API handles request routing, data validation, and communication with the database.
+    \item \textbf{Frontend:} Built using React with Vite and styled via Tailwind CSS. React was explicitly chosen over ASP.NET's Blazor to ensure a strictly decoupled, modern architecture. Integrating Blazor with a non-ASP.NET backend would have introduced unnecessary friction. Furthermore, React aligns with modern industry standards, providing valuable practical experience.
+    \item \textbf{Backend:} A Laravel REST API handles request routing and database communication. While SpeedAdmin suggested an ASP.NET backend, Laravel was selected because the development team had established proficiency with the framework from prior coursework, allowing for rapid prototyping and reliable execution under strict deadlines.
     \item \textbf{Database:} Microsoft SQL Server was utilized to manage the complex, relational structure of the provided dataset.
-    \item \textbf{AI Service:} A dedicated Node.js service utilizing the Vercel AI SDK acts as the bridge between the backend and the large language models. To strictly comply with GDPR and prevent external data transmission, Ollama and LM Studio were chosen to run the models locally. This fulfills the core requirement of maintaining a model-agnostic pipeline where models can be easily interchanged.
+    \item \textbf{AI Service:} A dedicated Node.js service utilizing the Vercel AI SDK acts as the bridge between the backend and the large language models. To comply with privacy concerns and prevent external data transmission, Ollama and LM Studio were chosen to run the models locally. This fulfills the core requirement of maintaining a model-agnostic pipeline where models can be easily interchanged.
     \item \textbf{Containerization:} Docker and Docker Compose were used to orchestrate the entire environment, ensuring the application runs consistently across different host machines without dependency conflicts.
 \end{itemize}
 
