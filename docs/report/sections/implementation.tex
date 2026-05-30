@@ -1,2 +1,128 @@
 \section{Implementation} \label{sec:implementation}
+This chapter details the technical execution of the Synapse system. It highlights the translation of architectural blueprints into functional code, focusing on frontend composition, backend query parsing, ORM relational mapping, and the optimizations applied to the AI service and containerized environment.
+
+\subsection{Frontend SPA Routing and Composition}
+\begin{sloppypar}
+    The frontend was implemented as a Single Page Application using React and
+    \texttt{react\allowbreak-router\allowbreak-dom}. To achieve a unified dashboard design,
+    the application is bootstrapped with a \texttt{BrowserRouter} that wraps a global
+    \texttt{AppLayout} component. The routing logic explicitly defines the available
+    views and swaps them dynamically without triggering full page reloads:
+\end{sloppypar}
+
+\begin{verbatim}
+<BrowserRouter>
+    <AppLayout>
+        <Routes>
+            <Route path="/" element={<LogsViewPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+    </AppLayout>
+</BrowserRouter>
+\end{verbatim}
+
+The \texttt{AppLayout} acts as the structural shell, rendering a persistent navigation \texttt{Sidebar} while injecting the route-specific content into the main viewing area. The primary workspace, \texttt{LogsViewPage}, acts as a container for two critical, side-by-side components. The composition logic places the \texttt{DataTable} in the main panel and the \texttt{AiChat} in a right-aligned sidebar:
+
+\begin{verbatim}
+<div className="logs-view-container flex h-full w-full">
+    <div className="logs-view-page flex h-full flex-1 
+                    flex-col items-center justify-end gap-2 p-8 pt-1.5">
+        <DataTable
+            rows={data.rows}
+            columns={data.columns}
+            limit={defaultPerPage}
+            loading={loading}
+            error={error}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
+        />
+    </div>
+    <div className="ai-sidebar w-1/4">
+        <AiChat />
+    </div>
+</div>
+\end{verbatim}
+
+\subsection{Backend Query Parsing and Database Interaction}
+To realize the tag-based query design (e.g., \texttt{student:Bobby category:LoginSystem}), the backend \texttt{LogController} processes incoming query strings through a custom parsing algorithm. The \texttt{filters} string is URL-decoded, split by spaces, and iterated over. Tokens containing a colon are split into key-value pairs (with underscores converted to spaces), while remaining tokens are aggregated as free-text search terms:
+
+\begin{verbatim}
+if (str_contains($part, ':')) {
+    [$key, $value] = explode(':', $part, 2);
+    if (in_array(strtolower($key), $allowedFilters)) {
+        $value = str_replace('_', ' ', $value);
+        $filters[strtolower($key)] = $value;
+    }
+} else {
+    $freeText[] = $part;
+}
+\end{verbatim}
+
+Direct column filters incorporate wildcard support by replacing the \texttt{*} character with SQL \texttt{\%} wildcards for \texttt{LIKE} queries via the Eloquent query builder.
+
+\subsection{Relational Mapping via Polymorphism}
+Because the dataset lacked strict SQL foreign key constraints, relationships were defined natively within the Eloquent models. The \texttt{Log} model establishes a standard \texttt{belongsTo} link with the modern global identity structure:
+
+\begin{verbatim}
+public function mainEntity()
+{
+    return $this->belongsTo(MainEntity::class, 'MainEntityId');
+}
+\end{verbatim}
+
+\begin{sloppypar}
+    Conversely, legacy logs rely on a polymorphic \texttt{morphTo} relationship within the \texttt{LogEntity} model to resolve historical subjects dynamically:
+\end{sloppypar}
+
+\begin{verbatim}
+public function historicalSubject()
+{
+    return $this->morphTo('historicalSubject', 'EntityType', 'EntityId');
+}
+\end{verbatim}
+
+To bridge the database's integer-based \texttt{EntityType} column to these application models, a morph map was enforced in the \texttt{AppServiceProvider}:
+
+\begin{verbatim}
+Relation::enforceMorphMap([
+    '1'  => 'App\Models\Pupil',
+    '2'  => 'App\Models\Teacher',
+    '3'  => 'App\Models\Room',
+    '4'  => 'App\Models\Equipment',
+    '10' => 'App\Models\Guardian',
+    '13' => 'App\Models\School',
+    '973' => 'App\Models\Booking',
+]);
+\end{verbatim}
+
+When querying logs by entity, the controller utilizes \texttt{whereHas} and \texttt{whereHasMorph} to simultaneously search both the modern global identity structure and the legacy polymorphic pivots.
+
+\subsection{AI Tool Calling and Token Optimization}
+\begin{sloppypar}
+    The Node.js AI service orchestrates the LLM using the Vercel AI SDK. To enforce strict data fetching boundaries, the \texttt{queryLogs} tool is governed by a Zod schema (\texttt{queryLogsSchema}) that explicitly defines permissible filter tags.
+\end{sloppypar}
+
+\textbf{Log Formatting Optimization:} Feeding raw JSON database responses back to the LLM consumes excessive context window tokens. A custom \texttt{formatLogs} function intercepts the backend's JSON and flattens each log into a dense, pipe-delimited string:
+
+\begin{verbatim}
+const formattedLogs = logs.rows.map((log) => {
+    return `${log.logId}|${log.entityName}|` +
+           `${log.category}|${log.message}`;
+});
+const responseText =
+    `${header}\n${formattedLogs.join('\n')}` +
+    `\n\n${paginationInfo}`;
+\end{verbatim}
+This structured plaintext format allows the model to analyze logs reliably while drastically reducing token usage.
+
+\subsection{Containerization and Development Refactoring}
+Throughout the development lifecycle, optimizations were required to stabilize the environment:
+\begin{itemize}
+    \item \textbf{Docker Optimization:} Comprehensive \texttt{.dockerignore} files were implemented across all services to exclude \texttt{node\_modules} and \texttt{vendor} directories. Node services enforced \texttt{npm ci} to guarantee deterministic builds, and multiple \texttt{RUN} directives in the backend Dockerfile were consolidated to reduce image layer overhead.
+    \item \textbf{Logging Strategy:} For API debugging, the team utilized PHP's native \texttt{error\_log} rather than Laravel's file-based \texttt{Log::debug()}. This routed backend logs directly to the Docker container's standard output, streamlining real-time debugging.
+    \item \textbf{Environment Constraints:} The system queries one SpeedAdmin dataset at a time. The active database is defined via the \texttt{DB\_DATABASE} variable in the backend's \texttt{.env} file, requiring a manual environment update and container restart to switch datasets.
+\end{itemize}
 \pagebreak
