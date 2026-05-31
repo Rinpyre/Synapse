@@ -1,0 +1,18 @@
+@startuml Deployment Diagram
+node "Browser" as user
+
+node "Docker Environment" as Host {
+  component "frontend container" as fe
+  component "backend container" as be
+  component "ai-service container" as ai
+  database "sqlserver container" as db
+}
+
+node "LLM runtime\n- Ollama / LM Studio -" as llm
+
+user --> fe : HTTP\nlocalhost:5173
+fe --> be : HTTP\nlocalhost:8000
+fe --> ai : HTTP\nlocalhost:8001
+be --> db : TDS/SQL
+ai --> llm : LLM API
+@enduml

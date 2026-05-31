@@ -1,0 +1,19 @@
+@startuml Sequence Flow 1: AI Deep Dive
+
+title Sequence Flow: AI Deep Dive Log Query Process
+
+actor "Support Staff" as U
+participant "Web UI" as UI
+participant "AI Service" as AI
+participant "Backend API" as API
+database "SQL Server" as DB
+
+U -> UI: Send AI prompt
+UI -> AI: Send prompt + context
+AI -> API: Tool call: Fetch logs
+API -> DB: Fetch log data
+DB -->> API: Return log data
+API -->> AI: Tool response: Log data
+AI -->> UI: Answer + summary
+UI -->> U: Stream response
+@enduml

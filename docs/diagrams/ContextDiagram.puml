@@ -1,0 +1,11 @@
+@startuml Context Diagram
+
+actor "Support Staff" as user
+component "Synapse System" as synapse
+database "SQL Server" as db
+node "LLM Runtime" as llm
+
+user --> synapse : Investigates logs
+synapse --> llm : Prompts
+synapse --> db : Queries
+@enduml

@@ -1,0 +1,16 @@
+@startuml Sequence Flow 3: AI-Assisted Query
+
+title Sequence Flow: AI-Assisted Log Query Process
+
+actor "Support Staff" as U
+participant "Web UI" as UI
+participant "AI Service" as AI
+participant "LLM Provider" as LLM
+
+U -> UI: Send AI prompt
+UI -> AI: Send prompt + context
+AI -> LLM: Prompt with user visible log data
+LLM -->> AI: Return answer + summary
+AI -->> UI: Display answer + summary
+UI -->> U: Stream response
+@enduml
