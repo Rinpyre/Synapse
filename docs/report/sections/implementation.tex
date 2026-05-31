@@ -180,6 +180,12 @@ To meet the Reliability non-functional requirement, error handling as well as se
 \begin{itemize}
     \item \textbf{Structured Responses:} The backend returns structured JSON error responses with appropriate HTTP status codes. The frontend maps these codes to non-disruptive, inline UI messages, allowing the user to correct inputs and resume operation instantly. The AI service similarly wraps model timeouts in structured responses to prevent application crashes.
     \item \textbf{Docker Optimization:} Comprehensive \texttt{.dockerignore} files were implemented across all services to exclude \texttt{node\_modules} and \texttt{vendor} directories. Node services enforced \texttt{npm ci} to guarantee deterministic builds, and multiple \texttt{RUN} directives in the backend Dockerfile were consolidated to reduce image layer overhead.
+          \begin{figure}[H]
+              \centering
+              \includegraphics[width=0.7\textwidth]{images/DeploymentDiagram.png}
+              \caption{Deployment Diagram of the Docker Compose Environment}
+              \label{fig:deployment}
+          \end{figure}
     \item \textbf{Logging Strategy:} For API debugging, the team utilized PHP's native \texttt{error\_log} rather than Laravel's file-based \texttt{Log::debug()}. This routed backend logs directly to the Docker container's standard output, streamlining real-time debugging.
     \item \textbf{Environment Constraints:} The system queries one SpeedAdmin dataset at a time. The active database is defined via the \texttt{DB\_DATABASE} variable in the backend's \texttt{.env} file, requiring a manual environment update and container restart to switch datasets.
 \end{itemize}

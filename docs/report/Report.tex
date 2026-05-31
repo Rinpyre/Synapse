@@ -49,6 +49,16 @@
 \renewcommand{\cfttoctitlefont}{\hfill}
 \renewcommand{\cftaftertoctitle}{\hfill}
 
+% Center LOF (List of Figures) title
+\renewcommand{\listfigurename}{\centering\large\bfseries List of Figures}
+\renewcommand{\cftloftitlefont}{\hfill}
+\renewcommand{\cftafterloftitle}{\hfill}
+
+% LOF customization - add dots and fix the gap
+\renewcommand{\cftfigpresnum}{\bfseries}
+\renewcommand{\cftfigaftersnum}{.\normalfont}
+\renewcommand{\cftfignumwidth}{1.5em}
+
 % 2. DOCUMENT CONTENT
 \begin{document}
 
@@ -87,6 +97,7 @@
 \end{titlepage}
 
 \tableofcontents
+\listoffigures
 \newpage
 
 % ===== CONTENT BEGINS HERE =====

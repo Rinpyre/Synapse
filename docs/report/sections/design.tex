@@ -1,13 +1,6 @@
 \section{Design} \label{sec:design}
 This chapter outlines the architectural blueprints of the Synapse application. To satisfy the project's scalability, maintainability, and strict separation-of-concerns requirements, the system was designed using a containerized microservice architecture. This chapter details the system components, their interactions, and the underlying data structures, serving as the theoretical foundation for the technical implementation.
 
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{images/component_diagram.png}
-%     \caption{High-level Microservice Architecture of the Synapse System}
-%     \label{fig:architecture}
-% \end{figure}
-
 \subsection{System Architecture}
 The application ecosystem is divided into four primary, decoupled services, each with a strictly defined operational role:
 
@@ -20,6 +13,13 @@ The application ecosystem is divided into four primary, decoupled services, each
 
     \item \textbf{Database Server (Persistence Layer):} A relational Microsoft SQL Server instance storing all system logs, entity relationships, and school data provided by SpeedAdmin.
 \end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/ComponentDiagram.png}
+    \caption{C4 Component Diagram of the Containerized Synapse Architecture}
+    \label{fig:components}
+\end{figure}
 
 \subsection{Artificial Intelligence Subsystem \& Orchestration}
 Integrating an LLM into an operational environment requires strict behavioral architecture to ensure data security and predictable outputs. The AI subsystem utilizes the Vercel AI SDK to manage a bounded \texttt{streamText} tool-calling loop.
@@ -39,6 +39,14 @@ Both the Frontend UI and the AI Service communicate with the Backend API using t
     \item \textbf{Human Interaction:} Users leverage autocomplete values supplied by the backend's \texttt{SuggestionController} to build this query string manually in a search bar.
     \item \textbf{AI Interaction:} When the LLM decides it needs data, it outputs a structured JSON tool call. The AI Service's \texttt{queryLogs} execution pipeline translates these parameters into the identical tag-based query string format and forwards it to the backend.
 \end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/SequenceFlow3.png}
+    \caption{Sequence Diagram: AI-Assisted Log Query Process}
+    \label{fig:sequence}
+\end{figure}
+
 This design guarantees that the AI and the user are subject to the exact same underlying authorization and filtering logic.
 
 \subsection{Database Schema and Polymorphic Relational Design}
@@ -51,10 +59,10 @@ To resolve this architectural gap without mutating the provided dataset's raw SQ
 \end{itemize}
 By defining these polymorphic relationships centrally within the application's service providers, the backend's controllers can utilize relationship-existence queries (such as \texttt{whereHas} and \texttt{whereHasMorph}). This allows the API to successfully resolve a single user or AI query across both old and new database schemas seamlessly.
 
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\textwidth]{../images/database_diagram.png}
-%     \caption{Entity Relationship Diagram of the SpeedAdmin Dataset}
-%     \label{fig:database}
-% \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/ClassDiagram.png}
+    \caption{UML Class Diagram illustrating the Polymorphic Relational Mapping}
+    \label{fig:database}
+\end{figure}
 \pagebreak
