@@ -2,11 +2,15 @@
 This chapter outlines how the Synapse system was tested during development to ensure it met the functional and non-functional requirements. Testing was primarily manual and conducted across different stages of the development lifecycle, utilizing specific tools for the API, the frontend, and code quality.
 
 \subsection{Test Approach and Tooling}
-Testing was divided into clear functional areas rather than relying on automated testing suites, which fell outside the scope of the project timeline.
+The testing strategy prioritized manual, exploratory testing over automated suites (such as PHPUnit or Jest). Because the project was developed as a rapid proof-of-concept, the system's architecture underwent frequent, late-stage iterations---such as evolving the backend from simple queries to complex polymorphic relations, and pivoting the AI service to Node.js. Maintaining automated tests during this volatile prototyping phase would have introduced severe development friction.
+
+Furthermore, evaluating the non-deterministic natural language outputs of the LLM, alongside the visual rendering of the React components, inherently required qualitative, "human-in-the-loop" validation that rigid unit tests cannot effectively provide. The database schema itself was provided directly by SpeedAdmin, meaning its structural integrity was treated as an established baseline rather than a component requiring structural testing.
+
+Testing was therefore divided into clear functional areas:
 \begin{itemize}
     \item \textbf{API Testing:} The Laravel Backend and the Node.js AI Service were tested in isolation using \textbf{Postman}. This allowed the team to verify that the headless API was returning the correct JSON structures and that the AI service was properly interpreting prompts before the frontend was connected.
     \item \textbf{UI Testing:} Frontend testing was performed manually in the browser. The team verified that the React components correctly consumed the API data and that user interactions (like pagination and filtering) triggered the correct state changes.
-    \item \textbf{Code Quality Assurance:} To maintain consistent formatting across the entire multi-service repository, a global NPM project wrapper utilizing \textbf{Prettier} was implemented. Additionally, \textbf{ESLint} was configured for the React frontend to catch syntactical errors early. (Note: Because the AI service's language was decided late in the project---pivoting from an initial plan of using Python to Node.js---the team prioritized functional implementation over configuring ESLint for that specific container).
+    \item \textbf{Code Quality Assurance:} To maintain consistent formatting across the entire multi-service repository, a global NPM project wrapper utilizing \textbf{Prettier} was implemented. Additionally, \textbf{ESLint} was configured for the Node.js based system components, like the React frontend, to catch syntactical errors early. However, because the AI service's language was decided late in the project---pivoting from an initial plan of using Python to Node.js---the team prioritized functional implementation over configuring ESLint for that specific container.
 \end{itemize}
 
 \subsection{Validation of Requirements}
