@@ -341,7 +341,7 @@ function createTools() {
             .nonnegative()
             .optional()
             .describe(
-                'Entity type ID Entity type ID (refer to the Log Types Map in your system instructions) (no wildcards).'
+                'Entity type ID (refer to the Log Types Map in your system instructions) (no wildcards).'
             ),
         entity: z.coerce
             .number()
