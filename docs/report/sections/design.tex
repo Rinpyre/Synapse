@@ -44,7 +44,7 @@ This design guarantees that the AI and the user are subject to the exact same un
 \subsection{Database Schema and Polymorphic Relational Design}
 The underlying data structure relies on a highly relational schema. However, a critical constraint identified during problem analysis was the lack of strict database-level SQL foreign key constraints connecting the central \texttt{Log} tables to the various subject entities.
 
-To resolve this architectural gap without mutating the provided dataset's raw SQL schema, the system design shifts the burden of relational mapping to the application layer. The backend Object-Relational Mapper (Eloquent) establishes relationships directly at the model layer:
+To resolve this architectural gap without mutating the provided dataset's raw SQL schema \cite{speedadmin_dataset}, the system design shifts the burden of relational mapping to the application layer. The backend Object-Relational Mapper (Eloquent) establishes relationships directly at the model layer:
 \begin{itemize}
     \item \textbf{Modern Global Identity:} The \texttt{Log} model is mapped to belong directly to a \texttt{MainEntity}, utilizing the stable \texttt{MainEntityId} and \texttt{EntityTypeId} identifiers.
     \item \textbf{Legacy Discovery:} To handle historical logs, the \texttt{LogEntity} records resolve subjects through a polymorphic \texttt{morphTo} relationship. This relies on a centrally mapped \texttt{EntityType} integer registry, ensuring legacy tables remain discoverable despite the absence of foreign keys.
