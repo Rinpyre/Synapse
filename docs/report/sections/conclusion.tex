@@ -1,4 +1,26 @@
 \section{Conclusion} \label{sec:conclusion}
+This chapter provides a final reflection on the Synapse project. It summarizes the core achievements and evaluates the system against its initial objectives, while also outlining the necessary future enhancements required to transition the proof-of-concept into a production-ready application.
+
 \subsection{Summary}
+The primary objective of this project was to address the challenges faced by SpeedAdmin regarding their operational logs, which are often overly verbose, highly complex, and difficult to navigate manually. To resolve this, the team designed and implemented "Synapse," a containerized web application that allows users to search and interpret log data using natural language.
+
+By leveraging Large Language Models via Ollama or other providers, the project successfully delivered a model-agnostic architecture. This ensures the application remains flexible, future-proof, and capable of seamlessly swapping open-source models as AI technology advances. All initial project goals were successfully met. Furthermore, the core natural language functionality was expanded during development to include a robust, tag-based manual keyword search system, providing users with highly granular control over their data.
+
+The project's key achievements include:
+\begin{itemize}
+    \item \textbf{Bridging the Semantic Gap:} Successfully translating raw, fragmented technical log data into actionable, human-readable insights via natural language processing.
+    \item \textbf{Future-Proof Engineering:} Building a fully model-agnostic AI pipeline capable of adapting instantly to new local inference engines.
+    \item \textbf{Privacy and Compliance:} Maintaining strict adherence to GDPR regulations by ensuring all generative AI processing remains fully localized, with zero external data transmission.
+    \item \textbf{Deployment Readiness:} Delivering a robust, containerized microservice architecture optimized for consistent deployment across different host environments.
+\end{itemize}
+
 \subsection{Future Work}
+While the proof-of-concept achieved its core objectives, several constraints remain that present clear logical steps for evolving the prototype into a production-ready enterprise system:
+
+\begin{itemize}
+    \item \textbf{Dynamic Dataset Selection:} Currently, the backend only processes a single SpeedAdmin dataset at a time. Switching sources requires manual modification of the backend environment configuration (\texttt{.env}) and a container restart. Future iterations should implement dynamic database routing driven by frontend UI selection.
+    \item \textbf{Persistent Document Storage:} To fully satisfy the sharing requirement for support ticketing, a persistent NoSQL storage solution (such as MongoDB) should be integrated. This would allow support staff to permanently save, share, and recall specific AI conversation threads and complex query states.
+    \item \textbf{Enhanced AI Context Injection:} Due to timeline constraints, the AI currently relies exclusively on tool-calling to fetch log data. A future optimization would involve directly injecting the logs currently visible in the user's frontend \texttt{DataTable} into the system prompt's context window, providing the LLM with immediate situational awareness and reducing API overhead.
+    \item \textbf{Authentication and Authorization:} The user authentication layer was removed from the initial scope to prioritize the AI pipeline. Implementing a robust, role-based access control (RBAC) system is a mandatory next step before the system could be safely deployed in a live administrative environment.
+\end{itemize}
 \pagebreak
