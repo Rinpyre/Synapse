@@ -1,0 +1,33 @@
+@startuml Component Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Synapse Component Diagram
+
+System_Boundary(synapseBoundary, "Synapse") {
+    Container_Boundary(frontendBoundary, "Frontend") {
+        Component(query, "Query Input", "React", "User interface for entering queries")
+        Component(results, "Results Display", "React", "Displays results and insights from the AI service")
+        Component(aichat, "AI Chat Interface", "React", "Chat interface for interacting with the AI service")
+    }
+    Container_Boundary(backendBoundary, "Backend") {
+        Component(suggestionapi, "Suggestion API", "Laravel", "Handles suggesting tags when users are querying")
+        Component(queryapi, "Query API", "Laravel", "Handles incoming queries, processes them and interacts with the AI service and database")
+        Component(chatapi, "Chat API", "Laravel", "Handles chat interactions with the AI service")
+    }
+}
+
+Boundary(invisible, "External systems") {
+    System_Boundary(aiBoundary, "AI Service provider") {
+        Component(aiService, "Ollama/LM Studio", "Custom AI Service (Node.js)", "Processes queries, generates responses with summaries and insights")
+    }
+    ContainerDb(database, "Database", "SQL Server", "Persists users, bookings, equipment, logs and audit data")
+}
+
+BiRel(suggestionapi, query, "Provides tag suggestions to")
+Rel(query, queryapi, "Sends user queries to")
+Rel(queryapi, results, "Receives query results from")
+BiRel(aichat, chatapi, "Sends chat messages to and from")
+BiRel(database, queryapi, "Retrieves data for queries from")
+BiRel(queryapi, aiService, "Receives queries requests for data from and sends results to")
+BiRel(chatapi, aiService, "Sends user chats for processing and receives responses from")
+@enduml

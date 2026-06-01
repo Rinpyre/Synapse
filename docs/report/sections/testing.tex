@@ -1,0 +1,29 @@
+\section{Testing and Validation} \label{sec:validation}
+This chapter outlines how the Synapse system was tested during development to ensure it met the functional and non-functional requirements. Testing was primarily manual and conducted across different stages of the development lifecycle, utilizing specific tools for the API, the frontend, and code quality.
+
+\subsection{Test Approach and Tooling}
+The testing strategy prioritized manual, exploratory testing over automated suites (such as PHPUnit or Jest). Because the project was developed as a rapid proof-of-concept, the system's architecture underwent frequent, late-stage iterations---such as evolving the backend from simple queries to complex polymorphic relations, and pivoting the AI service to Node.js. Maintaining automated tests during this volatile prototyping phase would have introduced severe development friction.
+
+Furthermore, evaluating the non-deterministic natural language outputs of the LLM, alongside the visual rendering of the React components, inherently required qualitative, "human-in-the-loop" validation that rigid unit tests cannot effectively provide. The database schema itself was provided directly by SpeedAdmin, meaning its structural integrity was treated as an established baseline rather than a component requiring structural testing.
+
+Testing was therefore divided into clear functional areas:
+\begin{itemize}
+    \item \textbf{API Testing:} The Laravel Backend and the Node.js AI Service were tested in isolation using \textbf{Postman}. This allowed the team to verify that the headless API was returning the correct JSON structures and that the AI service was properly interpreting prompts before the frontend was connected.
+    \item \textbf{UI Testing:} Frontend testing was performed manually in the browser. The team verified that the React components correctly consumed the API data and that user interactions (like pagination and filtering) triggered the correct state changes.
+    \item \textbf{Code Quality Assurance:} To maintain consistent formatting across the entire multi-service repository, a global NPM project wrapper utilizing \textbf{Prettier} was implemented. Additionally, \textbf{ESLint} was configured for the Node.js based system components, like the React frontend, to catch syntactical errors early. However, because the AI service's language was decided late in the project---pivoting from an initial plan of using Python to Node.js---the team prioritized functional implementation over configuring ESLint for that specific container.
+\end{itemize}
+
+\subsection{Validation of Requirements}
+Rather than formal test cases, the system's requirements were validated through targeted manual testing:
+\begin{itemize}
+    \item \textbf{Log Retrieval and Viewing:} The backend's ability to fetch logs was validated in Postman by ensuring the Eloquent ORM correctly mapped both the modern \texttt{MainEntityId} and the legacy \texttt{EntityTypeId} records from the provided SQL Server dataset. UI viewing was then validated by confirming the frontend \texttt{DataTable} correctly paginated this data.
+    \item \textbf{Querying and Security:} Tag autocomplete was tested by typing partial values into the UI and ensuring the dropdown matched the distinct database values. To validate the Security requirement (SQL injection prevention), malicious syntax (e.g., \texttt{' OR 1=1 --}) was entered into the search bar. The backend successfully neutralized the injection, proving the Eloquent parameter bindings worked.
+    \item \textbf{AI Summary and Streaming:} The AI requirement was tested by submitting complex log contexts to the model. Using Postman and the browser's network tab, the team validated that the Node.js service was utilizing Server-Sent Events (SSE) to stream the text chunks progressively, rather than hanging the request until completion.
+    \item \textbf{Model-Agnostic Pipeline:} The regulatory and architectural requirement to support local, swappable models was validated by modifying the \texttt{.env} file to point the AI service from Ollama to LM Studio. The system continued to function without requiring any code changes.
+\end{itemize}
+
+\subsection{Deployment Testing and the Docker Transition}
+For the majority of the development lifecycle, the system was built and tested using local development servers (e.g., Laravel's local server and Vite's dev server).
+
+A critical validation phase occurred when transitioning to the required Docker Compose environment near the end of the project. Testing the containerized application immediately revealed connection failures between services. This late-stage testing exposed that the services were relying on hardcoded \texttt{localhost} URLs and ports. To resolve this and validate the containerization requirement, the team refactored the networking configuration, moving all service URLs into dynamic \texttt{.env} variables so they could be properly resolved via Docker's internal DNS.
+\pagebreak

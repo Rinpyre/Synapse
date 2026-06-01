@@ -1,0 +1,16 @@
+@startuml Sequence Flow 2: Manual Query
+
+title Sequence Flow: Manual Log Query Process
+
+actor "Support Staff" as U
+participant "Web UI" as UI
+participant "Backend API" as API
+database "SQL Server" as DB
+
+U -> UI: Submit log query
+UI -> API: Send query parameters
+API -> DB: Fetch logs
+DB -->> API: Return log data
+API -->> UI: Return log data
+UI -->> U: Display log table
+@enduml

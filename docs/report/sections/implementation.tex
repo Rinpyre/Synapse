@@ -1,0 +1,192 @@
+\section{Implementation} \label{sec:implementation}
+This chapter details the technical realization of the Synapse system, linking the architectural blueprints and project requirements to concrete implementation choices. The focus is on frontend composition, backend query parsing, ORM relational mapping, AI streaming, and system reliability.
+
+\subsection{Frontend SPA Routing and Composition}
+\begin{sloppypar}
+    The frontend was implemented as a Single Page Application using React and
+    \texttt{react\allowbreak-router\allowbreak-dom}. To achieve a unified dashboard design,
+    the application is bootstrapped with a \texttt{BrowserRouter} that wraps a global
+    \texttt{AppLayout} component. The routing logic explicitly defines the available
+    views and swaps them dynamically without triggering full page reloads:
+\end{sloppypar}
+
+\begin{verbatim}
+<BrowserRouter>
+    <AppLayout>
+        <Routes>
+            <Route path="/" element={<LogsViewPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+    </AppLayout>
+</BrowserRouter>
+\end{verbatim}
+
+The \texttt{AppLayout} acts as the structural shell, rendering a persistent navigation \texttt{Sidebar} while injecting the route-specific content into the main viewing area. The primary workspace, \texttt{LogsViewPage}, acts as a container for two critical, side-by-side components. The composition logic places the \texttt{DataTable} in the main panel and the \texttt{AiChat} in a right-aligned sidebar:
+
+\begin{verbatim}
+<div className="logs-view-container flex h-full w-full">
+    <div className="logs-view-page flex h-full flex-1 
+                    flex-col items-center justify-end gap-2 p-8 pt-1.5">
+        <DataTable
+            rows={data.rows}
+            columns={data.columns}
+            limit={defaultPerPage}
+            loading={loading}
+            error={error}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
+        />
+    </div>
+    <div className="ai-sidebar w-1/4">
+        <AiChat />
+    </div>
+</div>
+\end{verbatim}
+
+Styling across these components is managed via Tailwind CSS, utilizing utility classes to ensure visual consistency without the risk of cascading class name conflicts.
+
+\subsection{Backend Query Parsing, Suggestions, and Security}
+To lower the barrier for non-technical users, the frontend fetches tag suggestions from the backend. This suggestion endpoint queries the database for distinct values and caches the results to avoid repeated expensive lookups during high-frequency use.
+
+When a user submits a tag-based query (e.g., \texttt{student:Bobby category:LoginSys*}), the backend \texttt{LogController} processes the incoming string through a custom parsing algorithm. The \texttt{filters} string is URL-decoded, split by spaces, and iterated over. Tokens containing a colon are split into key-value pairs (with underscores converted to spaces), while remaining tokens are aggregated as free-text search terms:
+
+\begin{verbatim}
+if (str_contains($part, ':')) {
+    [$key, $value] = explode(':', $part, 2);
+    if (in_array(strtolower($key), $allowedFilters)) {
+        $value = str_replace('_', ' ', $value);
+        $filters[strtolower($key)] = $value;
+    }
+} else {
+    $freeText[] = $part;
+}
+\end{verbatim}
+
+\textbf{Security and SQL Injection Prevention:} A critical non-functional requirement was securing the database. Once parsed, these filters are applied to the database using Laravel's Eloquent ORM. Because Eloquent utilizes PDO parameter binding under the hood, all user-supplied input is automatically sanitized. This fundamentally prevents SQL injection attacks, safely allowing column filters to incorporate wildcard support by replacing the \texttt{*} character with SQL \texttt{\%} wildcards and using \texttt{LIKE} queries via the Eloquent query builder.
+
+\subsection{Relational Mapping via Polymorphism}
+Because the dataset lacked strict SQL foreign key constraints, relationships were defined natively within the Eloquent models. The \texttt{Log} model establishes a standard \texttt{belongsTo} link with the modern global identity structure:
+
+\begin{verbatim}
+public function mainEntity()
+{
+    return $this->belongsTo(MainEntity::class, 'MainEntityId');
+}
+\end{verbatim}
+
+\begin{sloppypar}
+    Conversely, legacy logs rely on a polymorphic \texttt{morphTo} relationship within the \texttt{LogEntity} model to resolve historical subjects dynamically:
+\end{sloppypar}
+
+\begin{verbatim}
+public function historicalSubject()
+{
+    return $this->morphTo('historicalSubject', 'EntityType', 'EntityId');
+}
+\end{verbatim}
+
+To bridge the database's integer-based \texttt{EntityType} column to human-readable models, a morph map was enforced in the \texttt{AppServiceProvider}:
+
+\begin{verbatim}
+Relation::enforceMorphMap([
+    '1'  => 'App\Models\Pupil',
+    '2'  => 'App\Models\Teacher',
+    '3'  => 'App\Models\Room',
+    '4'  => 'App\Models\Equipment',
+    '10' => 'App\Models\Guardian',
+    '13' => 'App\Models\School',
+    '973' => 'App\Models\Booking',
+]);
+\end{verbatim}
+
+When querying logs by entity, the controller utilizes \texttt{whereHas} and \texttt{whereHasMorph} to simultaneously search both the modern global identity structure and the legacy polymorphic pivots.
+
+\subsection{AI Service Integration and Streaming}
+\begin{sloppypar}
+    The Node.js AI service orchestrates the LLM using the Vercel AI SDK. To enforce strict data fetching boundaries, the \texttt{queryLogs} tool is governed by a Zod schema (\texttt{queryLogsSchema}) that explicitly defines permissible filter tags.
+\end{sloppypar}
+
+\textbf{Server-Sent Events (SSE):} To address performance requirements, the AI service streams responses back to the frontend using Server-Sent Events. This allows partial results to appear progressively, vastly improving perceived responsiveness for long log summaries rather than forcing the user to wait for full generation.
+
+\subsection{Data Formatting and Token Optimization}
+Feeding raw JSON database responses back to the LLM consumes excessive context window tokens. A custom \texttt{formatLogs} function intercepts the backend's JSON and flattens each log into a dense, pipe-delimited string:
+
+\begin{verbatim}
+const formattedLogs = logs.rows.map((log) => {
+    return `${log.logId}|${log.entityName}|` +
+           `${log.category}|${log.message}`;
+});
+const responseText =
+    `${header}\n${formattedLogs.join('\n')}` +
+    `\n\n${paginationInfo}`;
+\end{verbatim}
+This structured plaintext format allows the model to analyze logs reliably while drastically reducing token usage.
+
+\subsection{Markdown Parsing and UI Rendering}
+Because the Large Language Model naturally outputs rich text (including bolding, lists, and code blocks), displaying raw text would result in an unreadable user interface. To resolve this, the frontend utilizes \texttt{ReactMarkdown} coupled with a robust plugin pipeline (including \texttt{remarkGfm} and \texttt{rehypeHighlight}) to parse the LLM's response.
+
+To ensure the rendered Markdown aligned with the application's Tailwind CSS design system, a custom component map was implemented. This allows default HTML elements generated by the Markdown to be intercepted and replaced with custom-styled React components. For example, standard \texttt{<pre>} blocks are intercepted and rendered as a custom \texttt{<CodeBlock>} component with syntax highlighting, while inline code and lists receive specific Tailwind utility classes:
+
+\begin{verbatim}
+pre: ({ children }) => {
+    const { code, language, renderedCode } = extractCodeInfo(children);
+    return (
+        <CodeBlock
+            code={code}
+            language={language}
+            isUser={isUser}
+            renderedCode={renderedCode}
+        />
+    )
+},
+code: ({ className, children }) => {
+    const text = getTextFromNode(children)
+    const isInline = !className && !text.includes('\n')
+
+    if (!isInline) {
+        return <code className={className}>{children}</code>
+    }
+
+    return (
+        <code className=`rounded border px-1 py-0.5 font-mono text-xs`>
+            {text}
+        </code>
+    )
+}
+\end{verbatim}
+
+\subsection{Streaming Performance and State Management}
+To fulfill the project's sharing requirement without relying on complex server-side session storage, functionality was built directly into the client application. Query results are serialized into a shareable URL encoding the active filter parameters, allowing recipients to reproduce the exact same filtered view. AI conversations are persisted in the frontend's local state and can be exported as formatted text for support ticketing.
+
+\textbf{Rendering Optimization:} During the development of the AI chat interface, severe UI stuttering and jittering occurred once the chat history grew beyond 10 messages. This performance degradation was caused by the Server-Sent Events (SSE) stream: every time a new chunk of text streamed in, it triggered a state update that forced the entire chat history to unnecessarily re-render.
+
+To mitigate this, a strict memoization strategy was implemented. The chat array was normalized using the \texttt{useMemo} hook, and the individual message rows were wrapped in \texttt{React.memo}.
+
+\begin{verbatim}
+export const Message = memo(
+    function Message({ role, content, messageId }) {
+        // Component rendering logic
+    }
+);
+\end{verbatim}
+
+By maintaining stable primitive props (\texttt{role}, \texttt{content}) for older messages, \texttt{React.\allowbreak memo} forces the React DOM to skip reconciliation. Consequently, as the stream updates state, only the newest, actively streaming \texttt{<Message>} component re-renders, resulting in a perfectly smooth chat experience regardless of history length.
+
+\subsection{Error Handling, Reliability, and Refactoring}
+To meet the Reliability non-functional requirement, error handling as well as several optimizations were implemented consistently across all services:
+\begin{itemize}
+    \item \textbf{Structured Responses:} The backend returns structured JSON error responses with appropriate HTTP status codes. The frontend maps these codes to non-disruptive, inline UI messages, allowing the user to correct inputs and resume operation instantly. The AI service similarly wraps model timeouts in structured responses to prevent application crashes.
+    \item \textbf{Docker Optimization:} Comprehensive \texttt{.dockerignore} files were implemented across all services to exclude \texttt{node\_modules} and \texttt{vendor} directories. Node services enforced \texttt{npm ci} to guarantee deterministic builds, and multiple \texttt{RUN} directives in the backend Dockerfile were consolidated to reduce image layer overhead.
+          \begin{figure}[H]
+              \centering
+              \includegraphics[width=0.7\textwidth]{images/DeploymentDiagram.png}
+              \caption{Deployment Diagram of the Docker Compose Environment}
+              \label{fig:deployment}
+          \end{figure}
+    \item \textbf{Logging Strategy:} For API debugging, the team utilized PHP's native \texttt{error\_log} rather than Laravel's file-based \texttt{Log::debug()}. This routed backend logs directly to the Docker container's standard output, streamlining real-time debugging.
+    \item \textbf{Environment Constraints:} The system queries one SpeedAdmin dataset at a time. The active database is defined via the \texttt{DB\_DATABASE} variable in the backend's \texttt{.env} file, requiring a manual environment update and container restart to switch datasets.
+\end{itemize}
+\pagebreak

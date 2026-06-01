@@ -1,0 +1,36 @@
+\section{Methodology}
+This section outlines the high-level approach, tools, and technical choices used to develop the Synapse application. It also details how foundational knowledge from previous academic semesters informed the system's architecture and development process.
+
+\subsection{Development Approach}
+The project was executed using an iterative, agile-inspired development lifecycle tailored for a small university team. The system was conceptually divided into distinct, decoupled services: the frontend client, the backend API, the AI service, and the database. This modular approach ensures that responsibilities remain clear, facilitating concurrent development and easier maintainability while satisfying the requirement for containerized separation of concerns.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/V-model.png}
+    \caption{Agile-Adapted V-Model for Iterative Development and Verification}
+    \label{fig:vmodel}
+\end{figure}
+
+\subsection{Technologies and Frameworks}
+The technology stack was selected to balance development speed, system stability, and strict compliance with the project's data privacy constraints.
+\begin{itemize}
+    \item \textbf{Frontend:} Built using React with Vite and styled via Tailwind CSS \cite{react_docs}. React was explicitly chosen over ASP.NET's Blazor to ensure a strictly decoupled, modern architecture. Integrating Blazor with a non-ASP.NET backend would have introduced unnecessary friction. Furthermore, React aligns with modern industry standards, providing valuable practical experience.
+    \item \textbf{Backend:} A Laravel REST API handles request routing and database communication \cite{laravel_docs}. While SpeedAdmin suggested an ASP.NET backend, Laravel was selected because the development team had established proficiency with the framework from prior coursework, allowing for rapid prototyping and reliable execution under strict deadlines.
+    \item \textbf{Database:} Microsoft SQL Server was utilized to manage the complex, relational structure of the provided dataset.
+    \item \textbf{AI Service:} A dedicated Node.js service utilizing the Vercel AI SDK acts as the bridge between the backend and the large language models \cite{vercel_ai}. To comply with privacy concerns and prevent external data transmission, Ollama and LM Studio were chosen to run the models locally \cite{ollama_docs}. This fulfills the core requirement of maintaining a model-agnostic pipeline where models can be easily interchanged.
+    \item \textbf{Containerization:} Docker and Docker Compose were used to orchestrate the entire environment, ensuring the application runs consistently across different host machines without dependency conflicts.
+\end{itemize}
+
+\subsection{Project Management and Collaboration}
+Version control and collaborative development were managed through Git and GitHub. The team utilized branch-based development and pull requests to maintain code quality. Task delegation and progress tracking were handled via GitHub Projects, while daily communication and weekly team meetings were coordinated through Discord.
+
+\subsection{Academic Foundation}
+The technical and architectural decisions in this project heavily rely on knowledge accumulated during the 3rd and 4th semesters of the BSc Software Engineering program.
+\begin{itemize}
+    \item \textbf{Web Development \& Data Management:} Informed the creation of the React frontend, the Laravel API, and the handling of the SQL Server database.
+    \item \textbf{Distributed Software Systems \& Component-Based Systems:} Guided the decision to decouple the architecture into independent containerized services (Frontend, Backend, AI, Database).
+    \item \textbf{Artificial Intelligence \& Intelligent Software Systems:} Provided the theoretical foundation necessary to implement the local LLM pipeline, structure effective tool schemas, and handle natural language processing tasks.
+\end{itemize}
+
+By combining this academic foundation with the selected technology stack and an agile workflow, the team was well-equipped to address the challenges outlined in the subsequent problem analysis. This structured approach ensures the final system meets the core requirements while demonstrating the practical application of the software engineering curriculum.
+\pagebreak

@@ -1,0 +1,136 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{cleveref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{color}
+
+\geometry{margin=1in}
+\setlength{\headheight}{17.2pt}
+\definecolor{orange}{rgb}{1.0, 0.494, 0.153}
+
+% Header and footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Synapse - Group 12}
+\fancyfoot[C]{\thepage}
+
+% Section title formatting - reduce spacing and add periods
+\titleformat{\section}
+  {\large\bfseries}
+  {\thesection.}
+  {0.25em}
+  {}
+
+% Subsection title formatting
+\titleformat{\subsection}
+  {\normalsize\bfseries}
+  {\thesubsection.}
+  {0.25em}
+  {}
+
+% TOC customization - add dots to all entries and center title
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecaftersnum}{.}
+\renewcommand{\cftsubsecaftersnum}{.}
+\renewcommand{\cftsecnumwidth}{1.5em}
+\renewcommand{\cftsubsecnumwidth}{2em}
+
+% Center TOC title
+\renewcommand{\contentsname}{\centering\large\bfseries Table of Contents}
+\renewcommand{\cfttoctitlefont}{\hfill}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+% Center LOF (List of Figures) title
+\renewcommand{\listfigurename}{\centering\large\bfseries List of Figures}
+\renewcommand{\cftloftitlefont}{\hfill}
+\renewcommand{\cftafterloftitle}{\hfill}
+
+% LOF customization - add dots and fix the gap
+\renewcommand{\cftfigpresnum}{\bfseries}
+\renewcommand{\cftfigaftersnum}{.\normalfont}
+\renewcommand{\cftfignumwidth}{1.5em}
+
+% 2. DOCUMENT CONTENT
+\begin{document}
+
+% Custom title page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge\bfseries Synapse \par}
+    \vfill
+    {\Large\bfseries Semester Project 4 Report \par}
+    {\large\bfseries AI Summarisation and Analysis of Resource Logs \par}
+    \vspace{1.5cm}
+
+    \vfill
+    {\Large \textbf{Group 12}} \\
+    \vspace{0.25cm}
+    \begin{tabular}{r | l}
+        Adrian Cristian Stancu & astan24@student.sdu.dk \\
+        Tomass Zarins          & tozar24@student.sdu.dk \\
+        Jakub Cuninka          & jacun24@student.sdu.dk \\
+        Marks Karlins          & mkarl24@student.sdu.dk \\
+        Balazs Istvan Nemeth   & banem24@student.sdu.dk \\
+    \end{tabular}
+    \vspace{1cm}
+
+    {\Large \textbf{Supervisor}} \\
+    \vspace{0.25cm}
+    \begin{tabular}{r | l}
+        Niklas Braun & niklas.braun@speedadmin.com \\
+    \end{tabular}
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+\newpage
+
+% ===== CONTENT BEGINS HERE =====
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/methodology}
+\input{sections/problem-analysis}
+\input{sections/requirements}
+\input{sections/design}
+\input{sections/implementation}
+\input{sections/testing}
+\input{sections/conclusion}
+
+\begin{thebibliography}{9}
+
+    \bibitem{speedadmin_brief}
+    SpeedAdmin ApS, \textit{AI Summarisation and Analysis of Resource Logs}, Internal Project Brief, 2026.
+
+    \bibitem{speedadmin_dataset}
+    N. Braun, \textit{SDU Semester Project - SpeedAdmin Dataset Description}, SpeedAdmin ApS, Internal Document, Jan. 2026.
+
+    \bibitem{laravel_docs}
+    Laravel, "Laravel Documentation," \textit{Laravel}. [Online]. Available: \url{https://laravel.com/docs}. [Accessed: May 31, 2026].
+
+    \bibitem{react_docs}
+    Meta Platforms, Inc., "React Documentation," \textit{React}. [Online]. Available: \url{https://react.dev}. [Accessed: May 31, 2026].
+
+    \bibitem{vercel_ai}
+    Vercel, "Vercel AI SDK Documentation," \textit{Vercel}. [Online]. Available: \url{https://sdk.vercel.ai/docs}. [Accessed: May 31, 2026].
+
+    \bibitem{ollama_docs}
+    Ollama, "Ollama Documentation," \textit{Ollama}. [Online]. Available: \url{https://github.com/ollama/ollama}. [Accessed: May 31, 2026].
+
+\end{thebibliography}
+
+\end{document}

@@ -1,8 +1,0 @@
-flowchart LR
-  user((Support Staff))
-  synapse[Synapse System]
-  db[(SQL Server)]
-  llm[LLM Runtime]
-  user -->|Investigates logs| synapse
-  synapse -->|Prompts| llm
-  synapse -->|Queries| db
