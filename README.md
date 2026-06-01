@@ -41,6 +41,8 @@ If you change MSSQL*PORT or MSSQL_SA_PASSWORD, update the backend DB*\* values t
 Command:
 
 - `docker compose up -d sqlserver`
+- After the container is up, run the init script inside it:
+  - `docker exec -it sqlserver2019 /usr/src/app/init.sh`
 
 ### Backend (Laravel)
 
